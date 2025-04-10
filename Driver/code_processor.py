@@ -72,7 +72,7 @@ def process_single_file(file_path):
         if documentation:
             # Create output filename
             filename = os.path.basename(file_path)
-            output_dir = "./documented_code"
+            output_dir = "../documented_code"
             os.makedirs(output_dir, exist_ok=True)
 
             output_file = os.path.join(output_dir, f"documented_{filename}")

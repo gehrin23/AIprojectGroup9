@@ -22,6 +22,8 @@ def get_source_files(repos, ftypes):
                     all_files.append(os.path.join(root, file))
     return all_files
 
+#run the repo_loader file. This run will create a text document of the number of identified code files that are specified in the
+#config.yaml file
 if __name__ == "__main__":
     config = load_config()
     source_files = get_source_files(

@@ -71,3 +71,8 @@ def create_jsonl(output_path="training_data.jsonl"):
         with open(output_path, "w", encoding="utf-8") as files:
             for entry in entries:
                 files.write(json.dumps(entry) + "\n")
+
+#this will run the create_jsonl.py file. This file will is used for training purposes. When ran, Ollama will need to
+#be running as well. This file trains the Ollama LLM using a .jsonl file since it provides easy formatting and parsing
+if __name__ == "__main__":
+    create_jsonl()

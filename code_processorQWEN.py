@@ -97,7 +97,7 @@ def process_single_file(file_path):
 
 if __name__ == "__main__":
     # Replace with path to a single Python file you want to document
-    target_file = "./repos/python_algorithms/bit_manipulation/binary_coded_decimal.py"
+    target_file = "./repos/python_algorithms/neural_network/back_propagation_neural_network.py"
 
     if not os.path.exists(target_file):
         print(f"File not found: {target_file}")

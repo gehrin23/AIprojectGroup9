@@ -8,9 +8,10 @@ def generate_documentation(code, model_name="qwen2.5-coder:14b"):
     prompt = f"""
     I need comprehensive documentation for the following source code:
 
-    ```
+    
     {code}
-    ```
+    
+    
     Please provide:
     1. A general description of what the code does
     2. Inline comments explaining key parts and logic to help clarify actions and variables
@@ -21,8 +22,25 @@ def generate_documentation(code, model_name="qwen2.5-coder:14b"):
     6. If a comment already exists, read over it, and determine if it accurately portrays what the method/function/variable is or is doing. 
     7. If comment is inaccurate, adjust the pre-existing comment so that it properly reflects what is happening
     8. A comment can be deemed inaccurate if it being to broad, or using incorrect terminology/jargon. 
+    9. If a comment is a single line, use the appropriate single line comment function, instead of using a multiline function
+    10.If a comment is a multiple lines, use the appropriate multiple line comment functionality, instead of using the single line function
+    11. DONT PROVIDE UNNECESSARY COMMENTATION! Meaning do not reply to the prompt that is being asked. Focus on providing the necessary comments and that is all
     
-    Format the output as the original code with added documentation.
+    Proper Comments for the following languages:
+        Java: 
+            - Single comment = // <comment>
+            - Multiline comment = /** <comment line>*/
+        HTML: 
+            - <!--- <comment> ----> 
+        CSS: 
+            - /* <comment lines> */
+        Python:
+            - Single comment = # <comment>
+            - Multiline comment = ''' <comment lines> '''
+            - Multiline comment = triple quotations <comment lines> triple quotations
+        JavaScript:
+            - Single comment = // <comment>
+            - Multiline comment = /* <comment lines> */
     """
 
     try:

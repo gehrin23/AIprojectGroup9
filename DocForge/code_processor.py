@@ -118,13 +118,8 @@ def process_repos(file_path):
 
 
 if __name__ == "__main__":
-<<<<<<<< HEAD:code_processorQWEN.py
-    # Replace with path to a single Python file you want to document
-    target_file = "./repos/python_algorithms/neural_network/back_propagation_neural_network.py"
-========
     config = rl.load_config()
     source_files = rl.get_source_files(config['repo_paths'], config['file_types'])
->>>>>>>> c7fa8334a1828ca60cfcd66afcec507a73658d26:DocForge/code_processor.py
 
     print(f"\n Found {len(source_files)} files to document.\n")
 

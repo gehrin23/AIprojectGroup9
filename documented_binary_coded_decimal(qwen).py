@@ -1,4 +1,3 @@
-```python
 def binary_coded_decimal(number: int) -> str:
     """
     Convert an integer to its Binary Coded Decimal (BCD) representation.
@@ -45,8 +44,7 @@ if __name__ == "__main__":
 
     # Run doctest to verify that the examples in the docstring work as expected
     doctest.testmod()
-```
-
+"""
 ### Explanation of Changes:
 1. **General Description**: Added a brief description of what the function does and its purpose.
 2. **Parameters and Returns**: Detailed explanation of the parameters and return value in the docstring.
@@ -55,3 +53,4 @@ if __name__ == "__main__":
 5. **Inline Comments**: Added comments within the code to explain key steps, though they were not requested specifically but can be helpful for clarity.
 
 This documentation should help users understand the purpose and usage of the `binary_coded_decimal` function, as well as how it handles various edge cases.
+"""

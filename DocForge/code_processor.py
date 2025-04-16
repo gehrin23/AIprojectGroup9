@@ -146,7 +146,7 @@ def pdf(summary, out, title):
     HTML(string=html).write_pdf(out)
 
 if __name__ == "__main__":
-    config = rl.load_config()
+    config = rl.load_config("../config.yaml")
     source_files = rl.get_source_files(config['repo_paths'], config['file_types'])
 
     print(f"\n Found {len(source_files)} files to document.\n")

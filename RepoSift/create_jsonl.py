@@ -50,8 +50,8 @@ def extract_snippets(path, ext):
 
     return snippets
 
-def create_jsonl_files(output_dir="training_data/"):
-    config = load_config()
+def create_jsonl_files(output_dir="../TrainingData/"):
+    config = load_config("../config.yaml")
     files = get_source_files(config['repo_paths'], config['file_types'])
 
     entries = defaultdict(list)

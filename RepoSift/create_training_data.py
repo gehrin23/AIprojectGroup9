@@ -84,9 +84,7 @@ def create_jsonl_files(output_dir="../TrainingData/"):
                 for code in ent:
                     f.write(json.dumps(code) + "\n")
 
-            print(f"Save {len(ent)} {ext.upper()} entries to {out}")
-
-#this will run the create_jsonl.py file. This file will is used for training purposes. When ran, Ollama will need to
+#this will run the create_training_data.py file. This file will is used for training purposes. When ran, Ollama will need to
 #be running as well. This file trains the Ollama LLM using a .jsonl file since it provides easy formatting and parsing
 if __name__ == "__main__":
     create_jsonl_files()

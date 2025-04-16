@@ -1,46 +1,31 @@
 import os, json, requests
 from RepoSift import repo_loader as rl
+from weasyprint import HTML
 
 def generate_documentation(code, model_name="qwen2.5-coder:14b"):
     """Generate documentation for a single code file using Qwen model."""
-    print(f"Generating documentation using {model_name}...")
+    print(f"Generating new comments and documentation using {model_name}...")
 
     prompt = f"""
-    I need comprehensive documentation for the following source code:
+    You are an assistant tool that has the only function of writing clearer, comprehensive, intelligent, clean, inline comments and docstrings.
+    Analyze the following source code and its pre-existing documentation (inline comments, docstrings). Only adjust the pre-existing comments when necessary. 
+    Otherwise, add missing inline comments when they are needed, add docstrings when they are missing, and rewrite docstrings or inline comments when the current 
+    ones are incomplete, incorrect, or are not concise. 
+    After adjusting the comments, produce an onboarding PDF summary of the entire project.
+    
+    Include:
+    1. Overall file purpose
+    2. Key functions/methods and their responsibilities
+    3. Inputs/outputs/side effects
+    4. Design patterns, dependencies
+    5. Point out cohesion and coupling 
 
     
     {code}
     
     
     Please provide:
-    1. A general description of what the code does
-    2. Inline comments explaining key parts and logic to help clarify actions and variables
-    3. Function/method/class/interface/enum documentation in proper format (docstring). Ensure to add parameters required, parameters variable name and their types, side effects of 
-    method/function, and what the method/function returns (if it returns anything)
-    4. Provide any import notes about usage, edge cases, side effects, limitations, or any other import documentation
-    5. Do not alter any existing functional code
-    6. If a comment already exists, read over it, and determine if it accurately portrays what the method/function/variable is or is doing. 
-    7. If comment is inaccurate, adjust the pre-existing comment so that it properly reflects what is happening
-    8. A comment can be deemed inaccurate if it being to broad, or using incorrect terminology/jargon. 
-    9. If a comment is a single line, use the appropriate single line comment function, instead of using a multiline function
-    10.If a comment is a multiple lines, use the appropriate multiple line comment functionality, instead of using the single line function
-    11. DONT PROVIDE UNNECESSARY COMMENTATION! Meaning do not reply to the prompt that is being asked. Focus on providing the necessary comments and that is all
-    
-    Proper Comments for the following languages:
-        Java: 
-            - Single comment = // <comment>
-            - Multiline comment = /** <comment line>*/
-        HTML: 
-            - <!--- <comment> ----> 
-        CSS: 
-            - /* <comment lines> */
-        Python:
-            - Single comment = # <comment>
-            - Multiline comment = ''' <comment lines> '''
-            - Multiline comment = triple quotations <comment lines> triple quotations
-        JavaScript:
-            - Single comment = // <comment>
-            - Multiline comment = /* <comment lines> */
+
     """
 
     try:
@@ -49,6 +34,17 @@ def generate_documentation(code, model_name="qwen2.5-coder:14b"):
             "model": model_name,
             "prompt": prompt,
             "stream": True,
+            "system": (
+                "You are a code documentation model.\n"
+                "Your task is to read existing comments, and ensure that they correctly reflect the methods, functions, and specific line statements.\n"
+                "You need to add inline comments when they are needed and are missing.\n"
+                "You need to add docstrings when they are missing, incorrect, unclear, or do not concisely explain the method/function.\n"
+                "YOU NEVER ALTER ANY PRE-EXISTING FUNCTIONAL CODE.\n"
+                "YOU NEVER ADD ANY ADDITIONAL FUNCTIONAL CODE.\n"
+                "Output only purse, valid code files.\n"
+                "NEVER use markdown syntax like '''python.\n"
+                "NEVER include commentary like 'Here's your revised code'.\n"
+            ),
             "options": {
                 "num_ctx": 4096
             }
@@ -91,6 +87,14 @@ def process_repos(file_path):
 
         if documentation:
             # Create output filename
+            split_token = "Please provide:"
+            if split_token in documentation:
+                comment = documentation.split(split_token)[0].strip()
+                summary = documentation.split(split_token)[1].strip()
+            else:
+                comment = documentation.strip()
+                summary = "No summary was generated, sorry"
+
             filename = os.path.basename(file_path)
             ext = os.path.split(filename)[1].lstrip('.')
             repo_root = os.path.basename(os.path.dirname(file_path))
@@ -101,7 +105,13 @@ def process_repos(file_path):
             with open(output_file, "w", encoding="utf-8") as f:
                 f.write(documentation)
 
+            pdf_name = f"{os.path.splitext(filename)[0]}_summary.pdf"
+            pdf_path = os.path.join(output_dir, pdf_name)
+            title = f"Onboarding Summary: {filename}"
+            pdf(summary, pdf_path, title)
+
             print(f"Documentation saved to {output_file}")
+            print(f"Onboarding saved to {pdf_path}")
 
             # Display a preview
             print("\nDocumentation Preview:")
@@ -116,6 +126,24 @@ def process_repos(file_path):
         print(f"Error processing file {file_path}: {e}")
         return False
 
+def pdf(summary, out, title):
+    html = f"""
+        <html>
+        <head>
+            <meta charset = "utf-8">
+            <style>
+                body {{ font-family: Arial, sans-serif; padding: 24px; }}
+                h1 {{ color: black; }}
+                pre {{ background: #f4f4f4; padding: 12px; border-left: 4px solid #ccc; white-space: pre-wrap; }}
+            <style>
+        <head>
+        <body>
+            <h1>{title}</h1>
+            <pre>{summary}</pre>
+        </body>
+        </html>   
+    """
+    HTML(string=html).write_pdf(out)
 
 if __name__ == "__main__":
     config = rl.load_config()

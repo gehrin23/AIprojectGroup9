@@ -1,5 +1,6 @@
 import json, os, ast, re, nbformat
 from repo_loader import load_config, get_source_files
+from collections import defaultdict
 
 def extract_snippets(path, ext):
     try:
@@ -49,30 +50,43 @@ def extract_snippets(path, ext):
 
     return snippets
 
-def create_jsonl(output_path="training_data.jsonl"):
+def create_jsonl_files(output_dir="training_data/"):
     config = load_config()
     files = get_source_files(config['repo_paths'], config['file_types'])
 
-    entries = []
+    entries = defaultdict(list)
 
     for file in files:
-        ext = os.path.splitext(file)[1]
-        snippets = extract_snippets(file, ext)
+        filename = os.path.basename(file)
+        ext = os.path.splitext(file)[1].lstrip('.').lower()
+
+        snippets = extract_snippets(file, '.' + ext)
 
         for snippet in snippets:
+
+            prompt = (
+                f"File: {filename} | Language: {ext.capitalize()}\n\n"
+                f"Review existing comments and add comments to help with clarity when reading the following code, but do not add unnecessary comments:\n{snippet.strip()}"
+            )
+
             entry = {
-                "prompt": f" Improve comments and clarity in this {ext} code:\n" + snippet,
-                "response": snippet
+                "PROMPT": prompt,
+                "RESPONSE": snippet.strip()
             }
-            entries.append(entry)
 
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            entries[ext].append(entry)
 
-        with open(output_path, "w", encoding="utf-8") as files:
-            for entry in entries:
-                files.write(json.dumps(entry) + "\n")
+        os.makedirs(output_dir, exist_ok=True)
+
+        for ext, ent in entries.items():
+            out = os.path.join(output_dir, ext + ".jsonl")
+            with open(out, 'w', encoding='utf-8') as f:
+                for code in ent:
+                    f.write(json.dumps(code) + "\n")
+
+            print(f"Save {len(ent)} {ext.upper()} entries to {out}")
 
 #this will run the create_jsonl.py file. This file will is used for training purposes. When ran, Ollama will need to
 #be running as well. This file trains the Ollama LLM using a .jsonl file since it provides easy formatting and parsing
 if __name__ == "__main__":
-    create_jsonl()
+    create_jsonl_files()

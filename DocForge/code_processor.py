@@ -1,6 +1,8 @@
 import os, json, requests
 from RepoSift import repo_loader as rl
-from weasyprint import HTML
+from reportlab.lib.pagesizes import LETTER
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
 
 def generate_documentation(code, model_name="qwen2.5-coder:14b"):
     """Generate documentation for a single code file using Qwen model."""
@@ -127,23 +129,27 @@ def process_repos(file_path):
         return False
 
 def pdf(summary, out, title):
-    html = f"""
-        <html>
-        <head>
-            <meta charset = "utf-8">
-            <style>
-                body {{ font-family: Arial, sans-serif; padding: 24px; }}
-                h1 {{ color: black; }}
-                pre {{ background: #f4f4f4; padding: 12px; border-left: 4px solid #ccc; white-space: pre-wrap; }}
-            <style>
-        <head>
-        <body>
-            <h1>{title}</h1>
-            <pre>{summary}</pre>
-        </body>
-        </html>   
-    """
-    HTML(string=html).write_pdf(out)
+    can = canvas.Canvas(out, pagesize=LETTER)
+    width, height = LETTER
+    margin = 0.75 * inch
+    line_height = 14
+
+    can.setFont("Helvetica-Bold", 16)
+    can.drawString(margin, height - margin, title)
+
+    can.setFont("Courier", 12)
+    y = height - margin - 30
+
+    for line in summary.splitlines():
+        if y < margin:
+            can.showPage()
+            can.setFont("Courier", 12)
+            y = height - margin
+        can.drawString(margin, y, line[:120])
+        y -= line_height
+
+    can.save()
+    print(f"{title} saved to {out}")
 
 if __name__ == "__main__":
     config = rl.load_config("../config.yaml")

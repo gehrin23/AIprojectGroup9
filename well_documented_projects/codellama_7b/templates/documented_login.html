@@ -1,0 +1,32 @@
+Overall file purpose
+
+This HTML file serves as a login page for the Django framework. The user can enter their username and password to log in and access protected content.
+
+Key functions/methods and their responsibilities:
+
+* The {% csrf_token %} tag is responsible for generating a unique token used to prevent cross-site request forgery attacks on our website.
+* The {% static 'css/login.css' %} tag specifies the path to the CSS file used to style the login page.
+* The {% if messages %} tag checks whether there are any error messages, and if so, displays them in a list.
+* The script tag is responsible for displaying an error message for 5 seconds before it disappears from view.
+* The form action="/login/" method="post" tag specifies the URL of our login view and the HTTP method used to send the form data.
+* The div class="form-group" tags group the input fields into logical sections.
+* The label for="username" and for="password" tags provide a textual description of each field.
+* The required attribute specifies that both fields must be filled in before the form can be submitted.
+* The button type="submit" class="login-button" tag submits the form data to our login view when clicked.
+* The {% if error %} tag checks whether there is an error message, and if so, displays it.
+
+Inputs/outputs/side effects:
+
+* Inputs: Username and password entered by the user.
+* Outputs: Redirects the user to the protected content after a successful login attempt or displays an error message if there are any issues with the input.
+* Side effects: The form data is sent to our login view, which authenticates the user and redirects them to the protected content if they are authorized.
+
+Design patterns, dependencies:
+
+* This HTML file uses Django's built-in authentication system and depends on the "messages" app for displaying error messages.
+* The script tag is responsible for displaying an error message for 5 seconds before it disappears from view.
+
+Cohesion and coupling:
+
+* Cohesion: The login page has a high cohesion level because all of its elements are related to the same purpose of authenticating users.
+* Coupling: The login page has a low coupling level because it only depends on the "messages" app for displaying error messages, and not on any other external system or component.

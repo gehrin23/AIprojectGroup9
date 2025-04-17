@@ -1,0 +1,22 @@
+Overall file purpose: Update a section in the database.
+    
+    Key functions and their responsibilities:
+    
+    * update_section() - This function is responsible for updating the information of a section in the database.
+    * edit_section() - This function renders the HTML form that allows users to modify the information of a section.
+    * delete_section() - This function deletes a section from the database.
+    
+    Inputs/outputs/side effects:
+    
+    * update_section(): It takes a section ID as input and updates the corresponding section in the database.
+    * edit_section(): It renders an HTML form that displays information about a specific section, allowing users to modify it.
+    * delete_section(): It takes a section ID as input and deletes the corresponding section from the database.
+    
+    Design patterns:
+    
+    * Model-View-Controller (MVC) design pattern is used in this project to separate the presentation layer from the business logic.
+    
+    Point out cohesion and coupling:
+    
+    * High cohesion: The functions update_section(), edit_section(), and delete_section() are well-organized and have a single responsibility within each function.
+    * Low coupling: These functions do not rely on any other functions or modules outside of the current file, making it easier to modify or replace them without affecting the entire project.

@@ -1,0 +1,1 @@
+Please provide the source code for me to analyze. I'll be happy to help you improve the comments and docstrings, and then generate a comprehensive onboarding PDF summary of the project.

@@ -1,0 +1,1 @@
+Please provide the source code and its pre-existing documentation (inline comments, docstrings). I'll analyze it and generate an onboarding PDF summary that includes the overall file purpose, key functions/methods, inputs/outputs/side effects, design patterns, dependencies, cohesion, and coupling.

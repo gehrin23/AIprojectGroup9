@@ -4,9 +4,12 @@ from reportlab.lib.pagesizes import LETTER
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 
-def generate_documentation(code, model_name="qwen2.5-coder:14b"):
-    """Generate documentation for a single code file using Qwen model."""
-    print(f"Generating new comments and documentation using {model_name}...")
+def safe_filename(name):
+    return name.replace(":", "_").replace("/", "_").replace("\\", "_")
+
+def generate_documentation(code, model):
+
+    print(f"Generating new comments and documentation using {model}...")
 
     prompt = f"""
     You are an assistant tool that has the only function of writing clearer, comprehensive, intelligent, clean, inline comments and docstrings.
@@ -14,7 +17,7 @@ def generate_documentation(code, model_name="qwen2.5-coder:14b"):
     Otherwise, add missing inline comments when they are needed, add docstrings when they are missing, and rewrite docstrings or inline comments when the current 
     ones are incomplete, incorrect, or are not concise. 
     After adjusting the comments, produce an onboarding PDF summary of the entire project.
-    
+
     Include:
     1. Overall file purpose
     2. Key functions/methods and their responsibilities
@@ -22,10 +25,10 @@ def generate_documentation(code, model_name="qwen2.5-coder:14b"):
     4. Design patterns, dependencies
     5. Point out cohesion and coupling 
 
-    
+
     {code}
-    
-    
+
+
     Please provide:
 
     """
@@ -33,7 +36,7 @@ def generate_documentation(code, model_name="qwen2.5-coder:14b"):
     try:
         url = "http://localhost:11434/api/generate"
         payload = {
-            "model": model_name,
+            "model": model,
             "prompt": prompt,
             "stream": True,
             "system": (
@@ -85,7 +88,7 @@ def process_repos(file_path, model_name):
         print(f"File size: {len(code)} characters")
         print(f"Number of lines: {code.count('\n') + 1}")
 
-        documentation = generate_documentation(code, model_name=model_name)
+        documentation = generate_documentation(code, model_name)
 
         if documentation:
             # Create output filename
@@ -99,7 +102,7 @@ def process_repos(file_path, model_name):
 
             filename = os.path.basename(file_path)
             project_name = os.path.basename(os.path.dirname(file_path))
-            output_dir = os.path.join("..", "well_documented_projects", model_name, project_name)
+            output_dir = os.path.join("..", "well_documented_projects", safe_filename(model_name), project_name)
             os.makedirs(output_dir, exist_ok=True)
 
             output_file = os.path.join(output_dir, f"documented_{filename}")
@@ -114,18 +117,12 @@ def process_repos(file_path, model_name):
             print(f"Documentation saved to {output_file}")
             print(f"Onboarding saved to {pdf_path}")
 
-            # Display a preview
-            print("\nDocumentation Preview:")
-            print("-" * 80)
-            preview = documentation[:500] + "..." if len(documentation) > 500 else documentation
-            print(preview)
-            print("-" * 80)
-
         return True
 
     except Exception as e:
         print(f"Error processing file {file_path}: {e}")
         return False
+
 
 def pdf(summary, out, title):
     can = canvas.Canvas(out, pagesize=LETTER)
@@ -150,16 +147,17 @@ def pdf(summary, out, title):
     can.save()
     print(f"{title} saved to {out}")
 
+
 if __name__ == "__main__":
     config = rl.load_config("../config.yaml")
     source_files = rl.get_source_files(config['repo_paths'], config['file_types'])
 
     print(f"\n Found {len(source_files)} files to document.\n")
 
-    for model_name in config['models']:
-        print(f"\nStarted with model: {model_name}")
+    for mod in config['models']:
+        print(f"\nStarted with model: {safe_filename(mod)}")
         for i, path, in enumerate(source_files):
-            print(f"\n[{i+1}/{len(source_files)}] Documenting: {path}")
-            success = process_repos(path, model_name)
+            print(f"\n[{i + 1}/{len(source_files)}] Documenting: {path}")
+            success = process_repos(path, mod)
             if not success:
                 print("Failed to document this file")

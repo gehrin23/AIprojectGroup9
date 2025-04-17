@@ -1,0 +1,124 @@
+```python
+# This file is a Django template for rendering a user contact card.
+# It includes HTML structure, CSS styling, and JavaScript functionality.
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.first_name }} {{ user.last_name }}</title>
+    <!-- Linking external stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Inline CSS to change placeholder color -->
+    <style>
+        input::placeholder {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar navigation menu -->
+    <aside>
+        <div class="item">
+            <a href="/dashboard/">
+                <div class="icon">🏠</div>
+                <span>Home</span>
+            </a>
+        </div>
+        <div class="item">
+            <a href="/display_all_users/">
+                <div class="icon">👤</div>
+                <span>All Users</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Displaying messages if any -->
+    {% if messages %}
+        <div id="messages" style="margin-left: -215px; margin-top: 5px;">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- JavaScript to hide messages after 5 seconds -->
+    <script>
+        const message = document.getElementById('messages');
+        if (message) {
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+    
+    <!-- Header section with navigation links -->
+    <header style="z-index: -5; position: absolute;">
+        <h1>User Contact Card</h1>
+        <nav class="nav">
+            {% if current_role == 'Admin/Supervisor' %}
+                <!-- Admin/Supervisor specific links -->
+                <a href="/create_user">Users</a>
+                <a href="/create_course">Courses</a>
+                <a href="/create_section">Section</a>
+            {% endif %}
+            <!-- Common navigation links -->
+            <a href="/notifications">Notifications</a>
+            <a href="/calendar">Calendar</a>
+            <a href="/tasks">Course Assignments</a>
+            <a href="{% url 'logout' %}" class="logout">Logout</a>
+        </nav>
+    </header>
+    
+    <!-- User contact card display -->
+    <div class="card" style="margin-top: 100px; position: absolute;">
+        <h1 style="text-align: center;">{{ user.first_name }} {{ user.last_name }}</h1>
+        <p>
+            <label><strong>Email: </strong></label>
+            <label>{{ user.email_address }}</label>
+        </p>
+        <p>
+            <label><strong>Phone Number: </strong></label>
+            <label>{{ user.phone_number }}</label>
+        </p>
+        <p>
+            <label><strong>Home Address: </strong></label>
+            <label>{{ user.street_address }}, {{ user.city }}, {{ user.state }}, {{ user.zip_code }}</label>
+        </p>
+        <p>
+            <label><strong>Role Type: </strong></label>
+            <label>{{ user.role_name }}</label>
+        </p>
+    </div>
+</body>
+</html>
+```
+
+### Onboarding PDF Summary
+
+#### 1. Overall File Purpose
+This Django template is responsible for rendering a user contact card. It displays user information such as name, email, phone number, address, and role. Additionally, it includes navigation menus, message alerts, and dynamic content based on the user's role.
+
+#### 2. Key Functions/Methods and Their Responsibilities
+- **HTML Structure**: The template is structured to display user details in a card format.
+- **CSS Styling**: External and inline CSS are used for styling, including placeholder text color.
+- **JavaScript Functionality**: A script hides message alerts after 5 seconds.
+
+#### 3. Inputs/Outputs/Side Effects
+- **Inputs**: User data (first name, last name, email address, phone number, etc.), messages, and user role.
+- **Outputs**: HTML content rendering a user contact card with navigation menus and message alerts.
+- **Side Effects**: None, the template is purely for display purposes.
+
+#### 4. Design Patterns, Dependencies
+- **Design Pattern**: MVC (Model-View-Controller) pattern is implied as Django templates are part of the view layer.
+- **Dependencies**: 
+  - Django framework for template rendering.
+  - Static files (CSS) for styling.
+
+#### 5. Cohesion and Coupling
+- **Cohesion**: High, as the template focuses on rendering user contact card information and navigation menus.
+- **Coupling**: Low, as the template is decoupled from business logic and data processing, relying solely on data passed to it.

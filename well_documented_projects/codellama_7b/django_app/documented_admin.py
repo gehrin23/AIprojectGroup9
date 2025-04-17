@@ -1,0 +1,8 @@
+1. Overall file purpose: The file contains code for registering models with the Django admin interface using the `admin` module and the `models` module.
+2. Key functions/methods and their responsibilities:
+* `userAdmin`: This class is a subclass of the `ModelAdmin` class provided by Django, which allows us to customize the behavior of the admin interface for the `User` model. The `list_display` attribute specifies which fields are displayed in the list view of the admin interface for this model.
+* `courseAdmin`: This class is similar to `userAdmin`, but it customizes the behavior of the admin interface for the `Course` model.
+* `sectionAdmin`: This class is similar to `courseAdmin`, but it customizes the behavior of the admin interface for the `Section` model.
+3. Inputs/outputs/side effects: The input to this file is the `models` module, which contains definitions of the `User`, `Course`, and `Section` models. The output of this file is the registration of these models with the Django admin interface using the `admin` module.
+4. Design patterns, dependencies: This file uses the ModelAdmin pattern provided by Django to customize the behavior of the admin interface for each model. It also depends on the `admin` and `models` modules provided by Django.
+5. Cohesion and coupling: The cohesion of this file is good because it has a clear purpose and a single responsibility (registering models with the Django admin interface). The coupling is low because it only depends on two external libraries (`admin` and `models`).

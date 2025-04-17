@@ -75,7 +75,7 @@ def generate_documentation(code, model_name="qwen2.5-coder:14b"):
         return None
 
 
-def process_repos(file_path):
+def process_repos(file_path, model_name):
     """Process a single file and generate documentation for it."""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -85,7 +85,7 @@ def process_repos(file_path):
         print(f"File size: {len(code)} characters")
         print(f"Number of lines: {code.count('\n') + 1}")
 
-        documentation = generate_documentation(code)
+        documentation = generate_documentation(code, model_name=model_name)
 
         if documentation:
             # Create output filename
@@ -98,14 +98,13 @@ def process_repos(file_path):
                 summary = "No summary was generated, sorry"
 
             filename = os.path.basename(file_path)
-            ext = os.path.split(filename)[1].lstrip('.')
-            repo_root = os.path.basename(os.path.dirname(file_path))
-            output_dir = os.path.join("..", "well_documented_code", repo_root, ext)
+            project_name = os.path.basename(os.path.dirname(file_path))
+            output_dir = os.path.join("..", "well_documented_projects", model_name, project_name)
             os.makedirs(output_dir, exist_ok=True)
 
             output_file = os.path.join(output_dir, f"documented_{filename}")
             with open(output_file, "w", encoding="utf-8") as f:
-                f.write(documentation)
+                f.write(comment)
 
             pdf_name = f"{os.path.splitext(filename)[0]}_summary.pdf"
             pdf_path = os.path.join(output_dir, pdf_name)
@@ -157,8 +156,10 @@ if __name__ == "__main__":
 
     print(f"\n Found {len(source_files)} files to document.\n")
 
-    for i, path, in enumerate(source_files):
-        print(f"\n[{i+1}/{len(source_files)}] Documenting: {path}")
-        success = process_repos(path)
-        if not success:
-            print("Failed to document this file")
+    for model_name in config['models']:
+        print(f"\nStarted with model: {model_name}")
+        for i, path, in enumerate(source_files):
+            print(f"\n[{i+1}/{len(source_files)}] Documenting: {path}")
+            success = process_repos(path, model_name)
+            if not success:
+                print("Failed to document this file")

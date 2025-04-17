@@ -77,24 +77,28 @@ def generate_documentation(code, model_name="qwen2.5-coder:14b"):
         return None
 
 
-def process_repos(file_path):
+def process_repos(file_path, model_name="qwen2.5-coder:14b"):
     """Process a single file and generate documentation for it."""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             code = file.read()
 
         print(f"Processing file: {file_path}")
+        print(f"Using model: {model_name}")
         print(f"File size: {len(code)} characters")
         print(f"Number of lines: {code.count('\n') + 1}")
 
-        documentation = generate_documentation(code)
+        documentation = generate_documentation(code, model_name)
 
         if documentation:
             # Create output filename
             filename = os.path.basename(file_path)
-            ext = os.path.split(filename)[1].lstrip('.')
+            ext = os.path.splitext(filename)[1].lstrip('.')
             repo_root = os.path.basename(os.path.dirname(file_path))
-            output_dir = os.path.join("..", "well_documented_code", repo_root, ext)
+
+            # Create model-specific output directory
+            model_dir = model_name.replace(':', '_')  # Replace colons for valid directory names
+            output_dir = os.path.join("..", "well_documented_code", model_dir, repo_root, ext)
             os.makedirs(output_dir, exist_ok=True)
 
             output_file = os.path.join(output_dir, f"documented_{filename}")
@@ -120,11 +124,23 @@ def process_repos(file_path):
 if __name__ == "__main__":
     config = rl.load_config()
     source_files = rl.get_source_files(config['repo_paths'], config['file_types'])
+    source_files = source_files[:5]  # Process only the first 5 files
 
     print(f"\n Found {len(source_files)} files to document.\n")
 
-    for i, path, in enumerate(source_files):
-        print(f"\n[{i+1}/{len(source_files)}] Documenting: {path}")
-        success = process_repos(path)
-        if not success:
-            print("Failed to document this file")
+    # Define the models to test
+    models = [
+        "qwen2.5-coder:14b",
+        "codellama:7b",
+        "llama3:8b"
+    ]
+
+    # Process each file with each model
+    for model in models:
+        print(f"\n\n===== TESTING MODEL: {model} =====\n")
+
+        for i, path in enumerate(source_files):
+            print(f"\n[{i + 1}/{len(source_files)}] Documenting with {model}: {path}")
+            success = process_repos(path, model)
+            if not success:
+                print(f"Failed to document this file with {model}")

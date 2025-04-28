@@ -12,15 +12,16 @@ PROMPT_METHODS = {
     "rubric": rubric_prompt,
 }
 
-
+# Utility to clean file names
 def safe_filename(name):
     return name.replace(":", "_").replace("/", "_").replace("\\", "_")
 
+# Generate documented code
 def generate_documentation(code, model, prompt_method):
 
     print(f"Generating new comments and documentation using {model} with {prompt_method} prompting. . . ")
 
-    prompt =  PROMPT_METHODS[prompt_method](code)
+    prompt = PROMPT_METHODS[prompt_method](code)
 
     try:
         url = "http://localhost:11434/api/generate"
@@ -55,8 +56,64 @@ def generate_documentation(code, model, prompt_method):
         print(f"Error generating documentation: {e}")
         return None
 
+# Generates an English onboarding summary
+def generate_summary_documentation(code, model):
+    print(f"Generating onboarding summary using {model}...")
 
-def process_repos(file_path, model_name, prompt_method):
+    prompt = f"""
+        You are an expert technical writer.
+        
+        Given the following source code (which already includes clear docstrings and 
+        inline comments), write a professional onboarding document in English that 
+        explains: 
+        
+            1. The overall purpose of the file
+            2. Key functions/methods/classes and what they do
+            3. Important variables and their usage
+            4. Design patterns, libraries, or external dependencies used
+            5. How this file connects to the larger project
+            6. Any special logic, edge cases, or clever design choices
+        
+        DO NOT output the code.
+        
+        Write a clear, readable structured explanation in full English paragraphs. 
+        
+        Here is the code {code}.
+        """
+
+    try:
+        url = "http://localhost:11434/api/generate"
+        payload = {
+            "model": model,
+            "prompt": prompt,
+            "stream": True,
+            "options": {
+            "num_ctx": 4096
+            }
+        }
+
+        response = requests.post(url, json=payload, stream=True)
+        full_response = ""
+        for line in response.iter_lines():
+            if line:
+                json_response = json.loads(line.decode('utf-8'))
+                if 'response' in json_response:
+                    chunk = json_response['response']
+                    full_response += chunk
+                    print(".", end="", flush=True)
+
+                if json_response.get('done', False):
+                    break
+
+        print("\nSummary generation completed.")
+        return full_response
+
+    except Exception as e:
+        print(f"Error generating summary: {e}")
+        return None
+
+# Process each repo file
+def process_repos(file_path, model_name, prompt_method, summarizer_model):
     """Process a single file and generate documentation for it."""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -66,18 +123,10 @@ def process_repos(file_path, model_name, prompt_method):
         print(f"File size: {len(code)} characters")
         print(f"Number of lines: {code.count('\n') + 1}")
 
-        documentation = generate_documentation(code, model_name, prompt_method)
+        # Step 1: Clean code generation
+        documented_code = generate_documentation(code, model_name, prompt_method)
 
-        if documentation:
-            # Create output filename
-            split_token = "Please provide:"
-            if split_token in documentation:
-                comment = documentation.split(split_token)[0].strip()
-                summary = documentation.split(split_token)[1].strip()
-            else:
-                comment = documentation.strip()
-                summary = "No summary was generated, sorry"
-
+        if documented_code:
             filename = os.path.basename(file_path)
             project_name = os.path.basename(os.path.dirname(file_path))
             output_dir = os.path.join("..", "well_documented_projects", safe_filename(model_name), project_name)
@@ -85,16 +134,19 @@ def process_repos(file_path, model_name, prompt_method):
 
             output_file = os.path.join(output_dir, f"documented_{filename}")
             with open(output_file, "w", encoding="utf-8") as f:
-                f.write(comment)
+                f.write(documented_code)
 
-            pdf_name = f"{os.path.splitext(filename)[0]}_summary.pdf"
-            pdf_path = os.path.join(output_dir, pdf_name)
-            title = f"Onboarding Summary: {filename}"
-            pdf(summary, pdf_path, title)
+            print(f"Documented code saved to {output_file}")
 
-            print(f"Documentation saved to {output_file}")
-            print(f"Onboarding saved to {pdf_path}")
+            # Step 2: Summarization pass
+            onboarding_summary = generate_summary_documentation(documented_code, summarizer_model)
 
+            if onboarding_summary:
+                pdf_name = f"{os.path.splitext(filename)[0]}_summary.pdf"
+                pdf_path = os.path.join(output_dir, pdf_name)
+                title = f"Onboarding Summary: {filename}"
+                pdf(onboarding_summary, pdf_path, title)
+                print(f"Onboarding PDF saved to {pdf_path}")
         return True
 
     except Exception as e:
@@ -125,11 +177,12 @@ def pdf(summary, out, title):
     can.save()
     print(f"{title} saved to {out}")
 
-
+# Main Driver
 if __name__ == "__main__":
     config = rl.load_config("../config.yaml")
     source_files = rl.get_source_files(config['repo_paths'], config['file_types'])
     prompt_method = config['prompt_method']
+    summarizer_model = config['summarizer_model']
 
     print(f"\n Found {len(source_files)} files to document.\n")
 
@@ -137,6 +190,6 @@ if __name__ == "__main__":
         print(f"\nStarted with model: {safe_filename(mod)}")
         for i, path, in enumerate(source_files):
             print(f"\n[{i + 1}/{len(source_files)}] Documenting: {path}")
-            success = process_repos(path, mod, prompt_method)
+            success = process_repos(path, mod, prompt_method, summarizer_model)
             if not success:
                 print("Failed to document this file")

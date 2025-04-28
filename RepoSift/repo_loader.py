@@ -2,7 +2,6 @@ from collections import defaultdict
 import yaml
 import os
 
-
 def load_config(filename="../config.yaml"):
     base_path = os.path.dirname(__file__)
     config_path = os.path.join(base_path, filename)

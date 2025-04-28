@@ -1,0 +1,66 @@
+```python
+# This file is a simple HTML template for the landing page of the JAAMZD Management Tool.
+# It includes a header with the school logo and navigation links, as well as a hero section with an image and a "Get Started" button.
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="{% static 'css/landing_page.css' %}">
+</head>
+<body>
+    <!-- Top Bar -->
+    <header>
+        <div class="logo">
+            <img src="{% static 'images/school_logo.png' %}" alt="School Logo"> <!-- Displays the school logo image -->
+        </div>
+        <h1 style="margin-left: 260px;">JAAMZD Management Tool</h1> <!-- Title of the management tool -->
+        <nav>
+            <a href="/login">Admin Login</a> <!-- Link for admin login -->
+            <a href="/login">Instructor Login</a> <!-- Link for instructor login -->
+            <a href="/login">TA Login</a> <!-- Link for teaching assistant login -->
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="landing-main">
+        <div class="hero-image">
+            <img src="{% static 'images/hero_image.jpg' %}" alt="Hero Image"> <!-- Background image for the hero section -->
+            <div class="hero-overlay">
+                <a href="/login" class="hero-button">Get Started</a> <!-- Button to initiate the login process -->
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+```
+
+### Onboarding PDF Summary
+
+#### 1. Overall File Purpose
+This HTML template serves as the landing page for the JAAMZD Management Tool. It provides a basic structure with a header containing the school logo and navigation links, and a hero section featuring an image and a "Get Started" button.
+
+#### 2. Key Functions/Methods and Their Responsibilities
+- **HTML Structure**: The file defines the HTML structure of the landing page, including the `<header>` for branding and navigation, and the `<main>` section for the main content.
+- **CSS Linking**: The `{% static 'css/landing_page.css' %}` tag is used to link an external CSS file that styles the elements on the page.
+
+#### 3. Inputs/Outputs/Side Effects
+- **Inputs**: None specific to this file; it does not take any inputs directly.
+- **Outputs**: This file renders the landing page HTML content when requested by a web server.
+- **Side Effects**: None; the file only outputs HTML and does not perform any other operations.
+
+#### 4. Design Patterns, Dependencies
+- **Design Patterns**: The use of semantic HTML elements (`<header>`, `<nav>`, `<main>`) follows modern web design practices.
+- **Dependencies**:
+  - Django template tags (`{% load static %}`) for referencing static files.
+  - CSS file (`landing_page.css`) for styling the page.
+
+#### 5. Cohesion and Coupling
+- **Cohesion**: The elements within the HTML are highly cohesive, as they all contribute to presenting a clear and consistent landing page design.
+- **Coupling**: The file is loosely coupled with other parts of the application. It relies on the existence of a CSS file for styling but does not directly interact with any backend logic or database operations.
+
+This summary provides an overview of the key aspects of the landing page template, including its purpose, functionality, dependencies, and design considerations.

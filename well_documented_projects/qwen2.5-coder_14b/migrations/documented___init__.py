@@ -1,0 +1,1 @@
+I'm sorry, but you haven't provided any source code to analyze. Could you please share the code snippet that needs review? Once I have it, I can help with adding or adjusting comments and docstrings, as well as creating an onboarding PDF summary for the project.

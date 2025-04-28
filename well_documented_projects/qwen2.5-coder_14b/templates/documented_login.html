@@ -1,0 +1,62 @@
+```html
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    {% if messages %}
+        <!-- Display any messages sent from the server -->
+        <div id="messages">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <script>
+        // Hide the messages after 5 seconds
+        const message = document.getElementById('messages');
+        if (message) {
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000); 
+        }
+    </script>
+    <div class="login-container">
+        <h1>Login</h1>
+        <form action="/login/" method="post">
+            {% csrf_token %}
+            <!-- Input field for username -->
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <!-- Input field for password -->
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <!-- Submit button for the login form -->
+            <button type="submit" class="login-button">Login</button>
+            
+            {% if error %}
+                <!-- Display any errors sent from the server -->
+                <p class="error">{{ error }}</p>
+            {% endif %}
+        </form>
+        <!-- Link to return to the landing page -->
+        <div class="back-container">
+            <a href="/" class="back-button">Back to Landing Page</a>
+        </div>
+    </div>
+</body>
+</html>
+```

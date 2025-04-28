@@ -1,0 +1,1 @@
+Please provide the source code you'd like me to analyze, and I'll get started on adding inline comments and docstrings as needed, while also creating a comprehensive PDF summary of the project. I'll be happy to help with that!

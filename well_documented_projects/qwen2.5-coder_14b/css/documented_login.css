@@ -1,0 +1,165 @@
+```css
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
+    font-family: Arial, sans-serif; /* Sets a default font family for all elements */
+}
+
+/* Basic alert styling */
+.alert {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px; /* Rounds the corners of the alert box */
+    font-size: 16px; /* Sets the font size for the alert text */
+    color: white; /* Default text color for alerts */
+}
+
+/* Success messages styling */
+.alert.success {
+    position: absolute; /* Positions the success message absolutely */
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%); /* Centers the success message horizontally */
+    background-color: #d4edda; /* Sets a light green background for success messages */
+    border: 1px solid #c3e6cb; /* Adds a light green border to success messages */
+    color: #155724; /* Sets a dark green text color for success messages */
+    z-index: 1000; /* Ensures the success message appears above other content */
+}
+
+/* Error messages styling */
+.alert.error {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f8d7da; /* Sets a light red background for error messages */
+    border: 1px solid #f5c6cb; /* Adds a light red border to error messages */
+    color: #721c24; /* Sets a dark red text color for error messages */
+    z-index: 1000;
+}
+
+/* Body Styling */
+body {
+    background-color: #f8f9fa; /* Sets a light gray background for the entire page */
+    color: #343a40; /* Sets a dark gray text color for the body content */
+    display: flex; /* Uses Flexbox to center content both vertically and horizontally */
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Makes the body take up the full viewport height */
+}
+
+/* Login Container Styling */
+.login-container {
+    background-color: white; /* Sets a white background for the login container */
+    padding: 2rem;
+    border-radius: 10px; /* Rounds the corners of the login container */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow to the login container */
+    width: 100%;
+    max-width: 400px; /* Limits the maximum width of the login container */
+    text-align: center; /* Centers the content inside the login container */
+}
+
+.login-container h1 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem; /* Sets a larger font size for the heading inside the login container */
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left; /* Aligns form group content to the left */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold; /* Makes labels bold for better visibility */
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd; /* Adds a light gray border to form inputs */
+    border-radius: 5px; /* Rounds the corners of form inputs */
+    font-size: 1rem; /* Sets the font size for input fields */
+}
+
+/* Login Button Styling */
+.login-button {
+    background-color: #e6a700; /* Sets a gold background color for the login button */
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none; /* Removes the default border from the login button */
+    border-radius: 5px; /* Rounds the corners of the login button */
+    margin-bottom: 0.5rem;
+    font-size: 1rem; /* Sets the font size for the login button text */
+    cursor: pointer; /* Changes the cursor to a pointer when hovering over the button */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Adds transitions for smooth visual effects */
+    width: 100%;
+}
+
+.login-button:hover {
+    background-color: #5a6268; /* Changes the background color to dark gray on hover */
+    transform: scale(1.02); /* Slightly enlarges the button on hover */
+}
+
+/* Error Message Styling */
+.error {
+    color: red; /* Sets a red color for error messages */
+    font-size: 0.9rem; /* Sets a smaller font size for error messages */
+    margin-top: 0.5rem;
+}
+
+/* Back to Landing Page Button Styling */
+.back-container {
+    margin-top: 1.5rem; /* Adds space above the back button */
+}
+
+.back-button {
+    text-decoration: none; /* Removes underlines from the back button link */
+    color: #000000;
+    background-color: #e6a700; /* Sets a gold background color for the back button */
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px; /* Rounds the corners of the back button */
+    font-size: 1rem; /* Sets the font size for the back button text */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Adds transitions for smooth visual effects */
+    display: inline-block; /* Allows margin to be applied */
+}
+
+.back-button:hover {
+    background-color: #5a6268; /* Changes the background color to dark gray on hover */
+    transform: scale(1.02); /* Slightly enlarges the button on hover */
+}
+```
+
+### Onboarding PDF Summary
+
+**1. Overall File Purpose**
+The CSS file styles various elements of a web page, primarily focusing on creating visually appealing and responsive UI components for user interaction, such as login forms and error messages.
+
+**2. Key Functions/Methods and Their Responsibilities**
+- **General Reset**: Removes default margin and padding from all elements to ensure consistent styling across different browsers.
+- **Basic Alert Styling**: Applies basic styling to alert boxes, setting padding, border-radius, and font size.
+- **Success Messages Styling**: Defines specific styles for success alerts, including positioning, background color, and text color.
+- **Error Messages Styling**: Defines specific styles for error alerts, similar to success messages but with different colors.
+- **Body Styling**: Centers the body content both vertically and horizontally using Flexbox, sets a light gray background, and defines default text color.
+- **Login Container Styling**: Styles the login form container, including its background color, padding, border-radius, shadow, and size.
+- **Form Group Styling**: Applies styles to form groups, including margin, text alignment, labels, and input fields.
+- **Login Button Styling**: Styles the login button with a gold background, white text, rounded corners, and hover effects.
+- **Error Message Styling**: Styles error messages in red color and smaller font size.
+- **Back to Landing Page Button Styling**: Styles the back button similarly to the login button but with different colors and transitions.
+
+**3. Inputs/Outputs/Side Effects**
+- **Inputs**: None (CSS is declarative and does not take inputs).
+- **Outputs**: Styled HTML elements that are visually appealing and responsive.
+- **Side Effects**: None (CSS does not alter the DOM structure or execute any JavaScript functions).
+
+**4. Design Patterns, Dependencies**
+- **Design Patterns**: Uses consistent styling patterns for buttons and alerts to maintain a uniform look across different sections of the web page.
+- **Dependencies**: No external dependencies as this is pure CSS.
+
+**5. Cohesion and Coupling**
+- **Cohesion**: High, as each section focuses on styling a specific part of the UI with clear and focused styles.
+- **Coupling**: Low, as each styling rule is independent and does not rely heavily on other parts of the stylesheet, ensuring that changes to one component do not affect others unless specifically designed to.

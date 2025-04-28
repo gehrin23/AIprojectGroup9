@@ -1,0 +1,146 @@
+```html
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifications</title>
+    <!-- Link to external CSS file for styling -->
+    <link rel="stylesheet" href="{% static 'css/calendar.css' %}">
+    <style>
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f4f4f4;
+            margin: 0.5rem 0;
+            padding: 1rem;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li:nth-child(odd) {
+            background-color: #e9ecef;
+        }
+
+        textarea, select, button {
+            display: block;
+            width: 100%;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #e6a700;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ffc107;
+        }
+
+        .form-section {
+            margin: 2rem 0;
+        }
+
+        .form-section label {
+            font-weight: bold;
+            margin-top: 1rem;
+            display: block;
+        }
+
+        .role {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Link to the dashboard -->
+        <a style="color: white; text-decoration: none; margin-left: 20px; position: absolute;" href="/dashboard"><strong>Back to Dashboard</strong></a>
+        <h1>Notifications</h1>
+    </header>
+    <main>
+        <!-- Section displaying the list of notifications -->
+        <section class="notification-section">
+            <h2>Your Notifications</h2>
+            <ul>
+                {% for notification in notifications %}
+                <li>
+                    <span>{{ notification.message }}</span>
+                    <span class="role">Role: {{ notification.role }}</span>
+                    <!-- Form to delete a specific notification -->
+                    <form action="{% url 'delete_notification' notification.id %}" method="post" style="margin-left: 10px;">
+                        {% csrf_token %}
+                        <button type="submit">Delete</button>
+                    </form>
+                </li>
+                {% empty %}
+                <!-- Message displayed when there are no notifications -->
+                <p>No notifications available.</p>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <!-- Section to create a new notification -->
+        <section class="form-section">
+            <h2>Create Notification</h2>
+            <!-- Form to submit new notification details -->
+            <form action="{% url 'create_notification' %}" method="post">
+                {% csrf_token %}
+                <label for="notification-message">Notification:</label>
+                <textarea id="notification-message" name="message" placeholder="Enter notification message" required></textarea>
+                <label for="role">Role:</label>
+                <select id="role" name="role" required>
+                    <option value="Admin/Supervisor">Admin/Supervisor</option>
+                    <option value="Instructor">Instructor</option>
+                    <option value="TA">TA</option>
+                </select>
+                <button type="submit">Add Notification</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
+```
+
+### Onboarding PDF Summary
+
+#### 1. Overall File Purpose
+The file is an HTML template for displaying and managing notifications. It includes a list of existing notifications, each with options to delete them, as well as a form to create new notifications.
+
+#### 2. Key Functions/Methods and Their Responsibilities
+- **Display Notifications**: The template renders a list of notifications passed from the backend. Each notification includes its message and associated role.
+- **Delete Notification**: Users can submit a form to delete a specific notification by clicking the "Delete" button next to each notification.
+- **Create New Notification**: A form is provided for users to input a new notification message and select a role, which are then submitted to the server.
+
+#### 3. Inputs/Outputs/Side Effects
+- **Inputs**:
+  - `notifications`: A list of notification objects passed from the backend containing `message` and `role`.
+- **Outputs**:
+  - HTML content displaying notifications and forms for creating and deleting them.
+- **Side Effects**:
+  - The user can delete or create notifications, which affects the state on the server.
+
+#### 4. Design Patterns, Dependencies
+- **Design Patterns**: The template follows a simple client-side rendering pattern using Django templates.
+- **Dependencies**:
+  - Django framework for templating and handling form submissions.
+  - Static CSS file for styling (`calendar.css`).
+
+#### 5. Cohesion and Coupling
+- **Cohesion**: High, as the HTML elements are closely related to displaying and managing notifications.
+- **Coupling**: Low, as the template is decoupled from the backend logic, relying solely on data passed in through context variables.

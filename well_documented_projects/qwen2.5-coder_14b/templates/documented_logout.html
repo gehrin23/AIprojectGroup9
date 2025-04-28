@@ -1,0 +1,96 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout Successful</title>
+    <style>
+        /* Set the overall style of the page */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+        }
+
+        /* Style the message container */
+        .message {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style the heading within the message */
+        .message h1 {
+            color: #e6a700;
+            margin-bottom: 1rem;
+        }
+
+        /* Style the paragraph text within the message */
+        .message p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Style the link within the message */
+        .message a {
+            text-decoration: none;
+            color: #e6a700;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        // Redirect the user to the landing page after 5 seconds
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 5000);
+    </script>
+</head>
+<body>
+    <!-- Display the logout success message and instructions -->
+    <div class="message">
+        <h1>Logout Successful</h1>
+        <p>You have been logged out. You will be redirected to the landing page in a few seconds.</p>
+        <p>If not, <a href="/">click here</a>.</p>
+    </div>
+</body>
+</html>
+```
+
+### Onboarding PDF Summary
+
+#### 1. Overall File Purpose
+This HTML file serves as a logout success message page. It provides users with a confirmation that they have successfully logged out and informs them that they will be redirected to the landing page shortly.
+
+#### 2. Key Functions/Methods and Their Responsibilities
+- **HTML Structure**: The structure includes:
+  - A `head` section for metadata and styles.
+  - A `body` section containing a message div with headings, paragraphs, and a link.
+  
+- **CSS Styling**:
+  - Styles the body to center content vertically and horizontally.
+  - Styles the message container for padding, background color, border-radius, and shadow.
+  - Styles text elements such as headings, paragraphs, and links.
+
+- **JavaScript Functionality**:
+  - Redirects the user to the landing page after a delay of 5 seconds using `setTimeout`.
+
+#### 3. Inputs/Outputs/Side Effects
+- **Inputs**: None specific; it responds to the logout action.
+- **Outputs**: Displays a logout success message and initiates a redirection process.
+- **Side Effects**: Changes the URL in the browser after 5 seconds.
+
+#### 4. Design Patterns, Dependencies
+- **Design Pattern**: Simple HTML/CSS/JavaScript structure without complex design patterns.
+- **Dependencies**: None; it does not rely on external libraries or frameworks.
+
+#### 5. Cohesion and Coupling
+- **Cohesion**: High cohesion as all elements are focused on displaying the logout success message and handling redirection.
+- **Coupling**: Low coupling since each part (HTML, CSS, JavaScript) performs a distinct function independently of others.

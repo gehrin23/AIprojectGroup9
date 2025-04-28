@@ -1,0 +1,15 @@
+1. Overall file purpose: This template is for managing courses and sections, allowing users to create new courses, sections, link TAs to a section, and edit existing course and section information.
+2. Key functions/methods and their responsibilities:
+	* The `{% for course in courses %}` loop is responsible for iterating over the list of courses and displaying them in the table.
+	* The `{% if assignment.section.course.courseId == course.courseId and assignment.role == "Instructor" %}` conditional statement is used to check if the current user has an instructor role for a particular course and display their name in the section's Instructors column.
+	* The `{% if assignment.section.sectionId == section.sectionId and assignment.role == "TA" %}` conditional statement is used to check if the current user has a TA role for a particular section and display their name in the section's TAs column.
+3. Inputs/outputs/side effects:
+	* The template takes as input a list of courses and sections, along with a list of course assignments that contain information about each user's role within the system.
+	* The template displays a table of all courses and their corresponding instructors and TAs in each section.
+	* The template does not have any side effects, such as making changes to the database or modifying the input data in any way.
+4. Design patterns:
+	* The template uses the Django template language to render HTML content, which is a common design pattern in web development.
+	* The template makes use of loops and conditional statements to iterate over lists of courses and sections, and display specific information for each one.
+5. Point out cohesion and coupling:
+	* Cohesion refers to the degree to which the elements of a module work together to achieve a common purpose. In this case, the template is well-cohesive because it uses clear and consistent naming conventions, and its structure is easy to understand for developers familiar with Django.
+	* Coupling refers to the degree to which a module is dependent on other modules in order to function correctly. In this case, the template has low coupling because it does not have any dependencies on external libraries or frameworks beyond those provided by Django itself.

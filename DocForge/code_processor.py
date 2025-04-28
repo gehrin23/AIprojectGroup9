@@ -3,35 +3,24 @@ from RepoSift import repo_loader as rl
 from reportlab.lib.pagesizes import LETTER
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
+from prompt_builder import *
+
+PROMPT_METHODS = {
+    "chain": chain_of_thought_prompt,
+    "few": few_shot_prompt,
+    "self": self_critique_prompt,
+    "rubric": rubric_prompt,
+}
+
 
 def safe_filename(name):
     return name.replace(":", "_").replace("/", "_").replace("\\", "_")
 
-def generate_documentation(code, model):
+def generate_documentation(code, model, prompt_method):
 
-    print(f"Generating new comments and documentation using {model}...")
+    print(f"Generating new comments and documentation using {model} with {prompt_method} prompting. . . ")
 
-    prompt = f"""
-    You are an assistant tool that has the only function of writing clearer, comprehensive, intelligent, clean, inline comments and docstrings.
-    Analyze the following source code and its pre-existing documentation (inline comments, docstrings). Only adjust the pre-existing comments when necessary. 
-    Otherwise, add missing inline comments when they are needed, add docstrings when they are missing, and rewrite docstrings or inline comments when the current 
-    ones are incomplete, incorrect, or are not concise. 
-    After adjusting the comments, produce an onboarding PDF summary of the entire project.
-
-    Include:
-    1. Overall file purpose
-    2. Key functions/methods and their responsibilities
-    3. Inputs/outputs/side effects
-    4. Design patterns, dependencies
-    5. Point out cohesion and coupling 
-
-
-    {code}
-
-
-    Please provide:
-
-    """
+    prompt =  PROMPT_METHODS[prompt_method](code)
 
     try:
         url = "http://localhost:11434/api/generate"
@@ -39,17 +28,6 @@ def generate_documentation(code, model):
             "model": model,
             "prompt": prompt,
             "stream": True,
-            "system": (
-                "You are a code documentation model.\n"
-                "Your task is to read existing comments, and ensure that they correctly reflect the methods, functions, and specific line statements.\n"
-                "You need to add inline comments when they are needed and are missing.\n"
-                "You need to add docstrings when they are missing, incorrect, unclear, or do not concisely explain the method/function.\n"
-                "YOU NEVER ALTER ANY PRE-EXISTING FUNCTIONAL CODE.\n"
-                "YOU NEVER ADD ANY ADDITIONAL FUNCTIONAL CODE.\n"
-                "Output only purse, valid code files.\n"
-                "NEVER use markdown syntax like '''python.\n"
-                "NEVER include commentary like 'Here's your revised code'.\n"
-            ),
             "options": {
                 "num_ctx": 4096
             }
@@ -78,17 +56,20 @@ def generate_documentation(code, model):
         return None
 
 
-def process_repos(file_path, model_name):
+
+def process_repos(file_path, model_name, prompt_method):
+
     """Process a single file and generate documentation for it."""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             code = file.read()
 
         print(f"Processing file: {file_path}")
+        print(f"Using model: {model_name}")
         print(f"File size: {len(code)} characters")
         print(f"Number of lines: {code.count('\n') + 1}")
-
-        documentation = generate_documentation(code, model_name)
+        
+        documentation = generate_documentation(code, model_name, prompt_method)
 
         if documentation:
             # Create output filename
@@ -152,12 +133,14 @@ if __name__ == "__main__":
     config = rl.load_config("../config.yaml")
     source_files = rl.get_source_files(config['repo_paths'], config['file_types'])
 
+    prompt_method = config['prompt_method']
+
     print(f"\n Found {len(source_files)} files to document.\n")
 
     for mod in config['models']:
         print(f"\nStarted with model: {safe_filename(mod)}")
         for i, path, in enumerate(source_files):
             print(f"\n[{i + 1}/{len(source_files)}] Documenting: {path}")
-            success = process_repos(path, mod)
+            success = process_repos(path, mod, prompt_method)
             if not success:
                 print("Failed to document this file")

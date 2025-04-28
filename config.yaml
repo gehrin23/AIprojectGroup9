@@ -9,3 +9,4 @@ models:
   - llama3:latest
   - codellama:7b
 
+prompt_method: chain

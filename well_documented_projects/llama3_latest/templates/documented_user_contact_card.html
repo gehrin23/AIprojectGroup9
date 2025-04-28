@@ -1,0 +1,21 @@
+**Onboarding PDF Summary**
+
+**File Purpose:** This HTML file serves as a user contact card, displaying essential information about the logged-in user. It also provides navigation links for administrators and supervisors.
+
+**Key Functions/Methods:**
+
+1. `render` - Renders the HTML template with user data and navigation links.
+2. `create_user`, `create_course`, `create_section` (conditional) - Navigation links for creating new users, courses, or sections (visible only to admins/supervisors).
+3. `notifications`, `calendar`, `tasks` (conditional) - Navigation links for accessing notifications, calendar events, and course assignments (visible only to logged-in users).
+
+**Inputs/Outputs/Side Effects:**
+
+* Inputs: User data (first name, last name, email address, phone number, home address, role type), navigation link conditions (admin/supervisor or regular user).
+* Outputs: A rendered HTML template with the user's contact information and navigation links.
+* Side effects: The script hides any existing notifications after 5 seconds.
+
+**Design Patterns/Dependencies:** This file uses a combination of HTML, CSS, and JavaScript to render dynamic content. It relies on the `messages` variable for displaying notification alerts.
+
+**Cohesion and Coupling:** The file has moderate cohesion as it combines multiple functionalities (user data display, navigation links, script logic). However, the coupling is relatively low since the script only interacts with the HTML template and CSS stylesheets.
+
+No docstrings are present in this code snippet. I will not add any new functional code or alter the existing functionality.

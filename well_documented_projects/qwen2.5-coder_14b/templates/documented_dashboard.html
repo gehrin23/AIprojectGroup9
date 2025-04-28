@@ -1,0 +1,552 @@
+```
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if role == 'Admin/Supervisor' %}
+    <!-- Set title for Admin Dashboard -->
+    <title>Admin Dashboard</title>
+    {% elif role == 'Instructor' %}
+    <!-- Set title for Instructor Dashboard -->
+    <title>Instructor Dashboard</title>
+    {% elif role == 'TA' %}
+    <!-- Set title for TA Dashboard -->
+    <title>TA Dashboard</title>
+    {% endif %}
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+        .card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .card p, .card ul {
+            margin: 10px 0;
+        }
+        .section h2 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2em;
+            color: #e6a700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside>
+        <div class="item">
+            <a href="/dashboard/">
+                <div class="icon">🏠</div>
+                <span>Home</span>
+            </a>
+        </div>
+        <div class="item">
+            <a href="/display_all_users/">
+                <div class="icon">👤</div>
+                <span>All Users</span>
+            </a>
+        </div>
+        {% if role == "Admin/Supervisor" %}
+        <!-- Admin-specific navigation links -->
+        <div class="item">
+            <a href="/create_user/">
+                <div class="icon">📘</div>
+                <span>Manage Users</span>
+            </a>
+        </div>
+        <div class="item">
+            <a href="/create_course/">
+                <div class="icon">📚</div>
+                <span>Courses</span>
+            </a>
+        </div>
+        {% endif %}
+        {% if role != 'TA' %}
+        <!-- Non-TA navigation links -->
+        <div class="item">
+            <a href="/send_email/">
+                <div class="icon">📧</div>
+                <span>Send Email</span>
+            </a>
+        </div>
+        {% endif %}
+        <div class="item">
+            <a href="/notifications/">
+                <div class="icon">🔔</div>
+                <span>Notifications</span>
+            </a>
+        </div>
+        <div class="item">
+            <a href="/calendar/">
+                <div class="icon">📅</div>
+                <span>Calendar</span>
+            </a>
+        </div>
+        <div class="item">
+            <a href="/tasks/">
+                <div class="icon">✅</div>
+                <span>Course Assignments</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Top Bar -->
+    <header>
+        <h1>Welcome, {{ name }}</h1>
+        <nav class="nav">
+            {% if role == 'Admin/Supervisor' %}
+            <!-- Admin-specific top bar links -->
+            <a href="/create_user">Users</a>
+            <a href="/create_course">Courses</a>
+            <a href="/create_section">Sections</a>
+            {% endif %}
+            <!-- Common top bar links -->
+            <a href="/notifications">Notifications</a>
+            <a href="/calendar">Calendar</a>
+            <a href="/tasks">Course Assignments</a>
+            <a href="{% url 'logout' %}" class="logout">Logout</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Profile Section -->
+        <section class="profile-section">
+            <div class="profile-info">
+                <div class="avatar">😊</div>
+                <div class="profile-details">
+                    <h2>{{ role }} {{ name }}</h2>
+                    <p>{{ email }}</p>
+                </div>
+                <a href="/edit_personnel_info/" class="edit-profile-btn">Edit Profile</a>
+            </div>
+        </section>
+
+        <!-- Notifications Section -->
+        <section id="notifications" class="section">
+            <h2>Notifications</h2>
+            <div class="card-container">
+                {% for notification in notifications %}
+                <div class="card">
+                    <p>{{ notification.message }}</p>
+                </div>
+                {% empty %}
+                <!-- Display message if no notifications are available -->
+                <div class="card">
+                    <p>No notifications available.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Tasks Section -->
+        <section id="tasks" class="section">
+            <h2>Your Tasks</h2>
+            <div class="card-container">
+                {% for task in tasks %}
+                <div class="card">
+                    <h3>{{ task.title }}</h3>
+                    <p><strong>Course:</strong> {{ task.course.courseName }}</p>
+                    <p><strong>Section:</strong> {% if task.section %}{{ task.section.sectionId }}{% else %}N/A{% endif %}</p>
+                    <p><strong>Due Date:</strong> {{ task.due_date }}</p>
+                    <p><strong>Description:</strong> {{ task.description }}</p>
+                </div>
+                {% empty %}
+                <!-- Display message if no tasks are assigned -->
+                <div class="card">
+                    <p>No tasks assigned to you.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if role == 'Admin/Supervisor' or role == 'Instructor' %}
+        <!-- Course Overview Section for Admins and Instructors -->
+        <section id="courses" class="section">
+            <h2>Courses</h2>
+            <div class="card-container">
+                {% for course in courses %}
+                <div class="card">
+                    <h3>{{ course.courseName }}</h3>
+                    <p><strong>Course ID:</strong> {{ course.courseId }}</p>
+                    <p><strong>Dates:</strong> {{ course.startDate }} - {{ course.endDate }}</p>
+                    <p><strong>Credits:</strong> {{ course.credits }}</p>
+                    <p><strong>Instructors:</strong></p>
+                    <ul>
+                        {% for assignment in course_assignments %}
+                            <!-- List instructors associated with the course -->
+                            {% if assignment.section.course.courseId == course.courseId and assignment.role == 'Instructor' %}
+                                <li>{{ assignment.user.first_name }} {{ assignment.user.last_name }}</li>
+                            {% endif %}
+                        {% empty %}
+                            <!-- Display message if no instructors are assigned -->
+                            <li>No instructors assigned</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Section Overview Section for Admins and Instructors -->
+        <section id="sections" class="section">
+            <h2>Sections</h2>
+            <div class="card-container">
+                {% for section in sections %}
+                <div class="card">
+                    <h3>Section {{ section.sectionId }}</h3>
+                    <p><strong>Course:</strong> {{ section.course.courseName }}</p>
+                    <p><strong>Type:</strong> {{ section.sectionType }}</p>
+                    <p><strong>Location:</strong> {{ section.sectionLocation }}</p>
+                    <p><strong>TAs:</strong></p>
+                    <ul>
+                        {% for assignment in course_assignments %}
+                            <!-- List TAs associated with the section -->
+                            {% if assignment.section.sectionId == section.sectionId and assignment.role == 'TA' %}
+                                <li>{{ assignment.user.first_name }} {{ assignment.user.last_name }}</li>
+                            {% endif %}
+                        {% empty %}
+                            <!-- Display message if no TAs are assigned -->
+                            <li>No TAs assigned</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- All Users Section -->
+        <section id="all-users" class="section">
+            <h2>All Users</h2>
+            <div class="card-container">
+                {% for user in all_users %}
+                <div class="card">
+                    <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                    <p><strong>Email:</strong> {{ user.email_address }}</p>
+                    <p><strong>Role:</strong> {{ user.role_name }}</p>
+                    {% if role == 'Admin/Supervisor' %}
+                        <!-- Admin-specific edit button for users -->
+                        <a href="/edit_user_info/?username={{ user.user_name }}" class="edit-profile-btn">Edit</a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 JAAMZ Group Team. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+```
+
+### Onboarding Document for the Web Dashboard
+
+#### Overview
+This document provides a comprehensive guide to understanding and using the web dashboard, which is designed to manage users, courses, sections, tasks, and notifications based on user roles (Admin/Supervisor, Instructor, TA).
+
+---
+
+### 1. **Dashboard Title**
+- The title of the dashboard varies depending on the role:
+  - **Admin Dashboard**: `<title>Admin Dashboard</title>`
+  - **Instructor Dashboard**: `<title>Instructor Dashboard</title>`
+  - **TA Dashboard**: `<title>TA Dashboard</title>`
+
+---
+
+### 2. **External CSS File**
+- The external CSS file (`styles.css`) is linked to ensure consistent styling across the dashboard.
+
+```html
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+```
+
+---
+
+### 3. **Sidebar Navigation**
+
+#### Navigation Links for All Roles:
+1. **Home**: Navigates back to the dashboard.
+   ```html
+   <div class="item">
+       <a href="/dashboard/">
+           <div class="icon">🏠</div>
+           <span>Home</span>
+       </a>
+   </div>
+   ```
+
+2. **All Users**: Displays a list of all users in the system.
+   ```html
+   <div class="item">
+       <a href="/display_all_users/">
+           <div class="icon">👤</div>
+           <span>All Users</span>
+       </a>
+   </div>
+   ```
+
+#### Navigation Links for Admins and Supervisors:
+1. **Manage Users**: Allows adding or modifying user accounts.
+   ```html
+   <div class="item">
+       <a href="/create_user/">
+           <div class="icon">📘</div>
+           <span>Manage Users</span>
+       </a>
+   </div>
+   ```
+
+2. **Courses**: Manages courses and sections within the system.
+   ```html
+   <div class="item">
+       <a href="/create_course/">
+           <div class="icon">📚</div>
+           <span>Courses</span>
+       </a>
+   </div>
+   ```
+
+#### Navigation Links for Non-TAs:
+1. **Send Email**: Allows sending emails to users.
+   ```html
+   <div class="item">
+       <a href="/send_email/">
+           <div class="icon">📧</div>
+           <span>Send Email</span>
+       </a>
+   </div>
+   ```
+
+#### Common Navigation Links:
+1. **Notifications**: Displays system notifications.
+   ```html
+   <div class="item">
+       <a href="/notifications/">
+           <div class="icon">🔔</div>
+           <span>Notifications</span>
+       </a>
+   </div>
+   ```
+
+2. **Calendar**: Manages calendar events and schedules.
+   ```html
+   <div class="item">
+       <a href="/calendar/">
+           <div class="icon">📅</div>
+           <span>Calendar</span>
+       </a>
+   </div>
+   ```
+
+3. **Course Assignments**: Displays and manages course tasks.
+   ```html
+   <div class="item">
+       <a href="/tasks/">
+           <div class="icon">✅</div>
+           <span>Course Assignments</span>
+       </a>
+   </div>
+   ```
+
+4. **Logout**: Allows users to log out of the system.
+   ```html
+   <a href="{% url 'logout' %}" class="logout">Logout</a>
+   ```
+
+---
+
+### 4. **Top Bar**
+
+#### Common Top Bar Links:
+1. **Notifications**: Navigate to the notifications section.
+2. **Calendar**: Navigate to the calendar section.
+3. **Course Assignments**: Navigate to the course assignments section.
+4. **Logout**: Log out from the dashboard.
+
+#### Admin-Specific Top Bar Links:
+1. **Users**: Navigate to manage users (Admins and Supervisors only).
+2. **Courses**: Navigate to manage courses (Admins and Supervisors only).
+3. **Sections**: Navigate to manage sections (Admins and Supervisors only).
+
+---
+
+### 5. **Main Content**
+
+#### Profile Section
+- Displays the user's profile information, including role and email.
+- Provides an option to edit the profile.
+
+```html
+<section class="profile-section">
+    <div class="profile-info">
+        <div class="avatar">😊</div>
+        <div class="profile-details">
+            <h2>{{ role }} {{ name }}</h2>
+            <p>{{ email }}</p>
+        </div>
+        <a href="/edit_personnel_info/" class="edit-profile-btn">Edit Profile</a>
+    </div>
+</section>
+```
+
+#### Notifications Section
+- Lists all notifications for the user.
+- Displays a message if no notifications are available.
+
+```html
+<section id="notifications" class="section">
+    <h2>Notifications</h2>
+    <div class="card-container">
+        {% for notification in notifications %}
+            <div class="card">
+                <p>{{ notification.message }}</p>
+            </div>
+        {% empty %}
+            <div class="card">
+                <p>No notifications available.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+```
+
+#### Tasks Section
+- Lists all tasks assigned to the user.
+- Displays a message if no tasks are assigned.
+
+```html
+<section id="tasks" class="section">
+    <h2>Your Tasks</h2>
+    <div class="card-container">
+        {% for task in tasks %}
+            <div class="card">
+                <h3>{{ task.title }}</h3>
+                <p><strong>Course:</strong> {{ task.course.courseName }}</p>
+                <p><strong>Section:</strong> {% if task.section %}{{ task.section.sectionId }}{% else %}N/A{% endif %}</p>
+                <p><strong>Due Date:</strong> {{ task.due_date }}</p>
+                <p><strong>Description:</strong> {{ task.description }}</p>
+            </div>
+        {% empty %}
+            <div class="card">
+                <p>No tasks assigned to you.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+```
+
+#### Courses and Sections (Admins and Instructors Only)
+- Displays a list of courses, including instructors associated with each course.
+- Displays a message if no instructors are assigned.
+
+```html
+<section id="courses" class="section">
+    <h2>Courses</h2>
+    <div class="card-container">
+        {% for course in courses %}
+            <div class="card">
+                <h3>{{ course.courseName }}</h3>
+                <p><strong>Course ID:</strong> {{ course.courseId }}</p>
+                <p><strong>Dates:</strong> {{ course.startDate }} - {{ course.endDate }}</p>
+                <p><strong>Credits:</strong> {{ course.credits }}</p>
+                <p><strong>Instructors:</strong></p>
+                <ul>
+                    {% for assignment in course_assignments %}
+                        {% if assignment.section.course.courseId == course.courseId and assignment.role == 'Instructor' %}
+                            <li>{{ assignment.user.first_name }} {{ assignment.user.last_name }}</li>
+                        {% endif %}
+                    {% empty %}
+                        <li>No instructors assigned</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="sections" class="section">
+    <h2>Sections</h2>
+    <div class="card-container">
+        {% for section in sections %}
+            <div class="card">
+                <h3>Section {{ section.sectionId }}</h3>
+                <p><strong>Course:</strong> {{ section.course.courseName }}</p>
+                <p><strong>Type:</strong> {{ section.sectionType }}</p>
+                <p><strong>Location:</strong> {{ section.sectionLocation }}</p>
+                <p><strong>TAs:</strong></p>
+                <ul>
+                    {% for assignment in course_assignments %}
+                        {% if assignment.section.sectionId == section.sectionId and assignment.role == 'TA' %}
+                            <li>{{ assignment.user.first_name }} {{ assignment.user.last_name }}</li>
+                        {% endif %}
+                    {% empty %}
+                        <li>No TAs assigned</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+```
+
+#### All Users Section
+- Lists all users in the system.
+- Provides an option to edit user information for Admins and Supervisors.
+
+```html
+<section id="all-users" class="section">
+    <h2>All Users</h2>
+    <div class="card-container">
+        {% for user in all_users %}
+            <div class="card">
+                <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                <p><strong>Email:</strong> {{ user.email_address }}</p>
+                <p><strong>Role:</strong> {{ user.role_name }}</p>
+                {% if role == 'Admin/Supervisor' %}
+                    <a href="/edit_user_info/?username={{ user.user_name }}" class="edit-profile-btn">Edit</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+```
+
+---
+
+### 6. **Footer**
+
+- Displays copyright information for the JAAMZ Group Team.
+
+```html
+<footer>
+    <p>&copy; 2024 JAAMZ Group Team. All rights reserved.</p>
+</footer>
+```
+
+---
+
+### Conclusion
+
+This web dashboard is designed to provide a comprehensive interface for managing various aspects of the system, tailored to different user roles (Admin/Supervisor, Instructor, TA). By following this onboarding guide, users can effectively navigate and utilize the dashboard to perform their respective tasks efficiently.

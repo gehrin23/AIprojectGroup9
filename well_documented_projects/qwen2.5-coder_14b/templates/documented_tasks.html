@@ -1,0 +1,189 @@
+```python
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Assignments</title>
+    <link rel="stylesheet" href="{% static 'css/calendar.css' %}">
+</head>
+<body>
+    <header>
+        <!-- Navigation links -->
+        <nav class="nav-right">
+            <a href="/dashboard/">Dashboard</a>
+        </nav>
+        <h1>Task Management</h1>
+        <nav class="nav-left">
+            <a style="margin-left: 40px;" href="/calendar/">Calendar</a>
+        </nav>
+    </header>
+
+    <!-- Display messages if any -->
+    {% if messages %}
+        <div id="messages">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Script to hide messages after 5 seconds -->
+    <script>
+            const message = document.getElementById('messages');
+            if (message) {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            }
+    </script>
+
+    <main>
+        <!-- Task List Section -->
+        <section class="task-list">
+            <h2>Course Assignments</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Description</th>
+                        <th>Assigned To</th>
+                        <th>Course</th>
+                        <th>Section</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through tasks and display each one -->
+                    {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.description }}</td>
+                        <td>{{ task.ta.first_name }} {{ task.ta.last_name }}</td>
+                        <td>{{ task.course.courseName }}</td>
+                        <!-- Display section if available, otherwise show N/A -->
+                        <td>{% if task.section %}{{ task.section.sectionId }}{% else %}N/A{% endif %}</td>
+                        <td>{{ task.due_date }}</td>
+                        <!-- Show task status as Complete or Incomplete -->
+                        <td>{{ task.completed|yesno:"Complete,Incomplete" }}</td>
+                        <td>
+                            <!-- Form to mark task as complete if not already completed and user is not a TA -->
+                            {% if not task.completed and role != 'TA' %}
+                            <form action="/tasks/" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="task_id" value="{{ task.id }}">
+                                <input type="hidden" name="action" value="complete">
+                                <button type="submit">Mark Complete</button>
+                            </form>
+                            {% endif %}
+                            <!-- Form to delete task if user is an Admin/Supervisor -->
+                            {% if role == 'Admin/Supervisor' %}
+                            <form action="{% url 'delete_task' task.id %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit">Delete</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <!-- Display message if no tasks are available -->
+                    {% empty %}
+                    <tr>
+                        <td colspan="8">No tasks available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Add Task Section -->
+        {% if role != 'TA' and role != 'Instructor' %}
+        <section class="add-task">
+            <h2>Add New Task</h2>
+            <form action="/tasks/" method="post">
+                {% csrf_token %}
+                <!-- Input for task name -->
+                <label for="task-name">Task Name:</label>
+                <input type="text" id="task-name" name="task-name" placeholder="Enter task name" required>
+
+                <!-- Textarea for task description -->
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" placeholder="Enter task description" required></textarea>
+
+                <!-- Input for due date -->
+                <label for="due-date">Due Date:</label>
+                <input type="date" id="due-date" name="due-date" required>
+
+                <!-- Select dropdown to assign the task to a user -->
+                <label for="user_id">Assign To:</label>
+                <select id="user_id" name="user_id" required>
+                    {% for user in users %}
+                    <!-- Only display TAs if user is Admin/Supervisor or Instructor -->
+                    {% if role == 'Admin/Supervisor' or role == 'Instructor' and user.role_name == 'TA' %}
+                    <option value="{{ user.user_name }}">{{ user.first_name }} {{ user.last_name }} ({{ user.role_name }})</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+
+                <!-- Select dropdown to choose the course -->
+                <label for="course_id">Course:</label>
+                <select id="course_id" name="course_id">
+                    <option value="">None</option>
+                    {% for course in courses %}
+                    <option value="{{ course.courseId }}">{{ course.courseName }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Select dropdown to choose the section (optional) -->
+                <label for="section_id">Section (Optional):</label>
+                <select id="section_id" name="section_id">
+                    <option value="">None</option>
+                    {% for section in sections %}
+                    <option value="{{ section.sectionId }}">{{ section.sectionId }} ({{ section.course.courseName }})</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Button to submit the form -->
+                <button type="submit" name="action" value="create">Add Task</button>
+            </form>
+        </section>
+        {% endif %}
+    </main>
+</body>
+</html>
+```
+
+### Onboarding PDF Summary
+
+#### Overall File Purpose
+This HTML template is designed for a task management system specifically focused on course assignments. It includes features for displaying tasks, marking them as complete, deleting tasks, and adding new tasks.
+
+#### Key Functions/Methods and Their Responsibilities
+- **Navigation Links**: Provide access to the dashboard and calendar.
+- **Message Display**: Show messages (e.g., success or error) that persist for 5 seconds before disappearing.
+- **Task List Section**: Displays a table of tasks with details such as title, description, assigned user, course, section, due date, status, and actions (mark complete/delete).
+- **Add Task Section**: Allows users to create new tasks by filling out a form with required fields like task name, description, due date, and assignment.
+
+#### Inputs/Outputs/Side Effects
+- **Inputs**: 
+  - User interactions via forms for marking tasks as complete, deleting tasks, or adding new tasks.
+  - Data passed from the server such as `tasks`, `messages`, `users`, `courses`, and `sections`.
+
+- **Outputs**:
+  - Displayed HTML content on the web page based on the provided data.
+  - User actions processed by the backend (e.g., task completion, deletion).
+
+#### Design Patterns, Dependencies
+- **Template Inheritance**: Uses Django template tags for dynamic content rendering.
+- **CSS**: Relies on an external CSS file (`calendar.css`) for styling.
+
+#### Cohesion and Coupling
+- **Cohesion**: High cohesion within each section of the page. Each section has a clear purpose (task list, message display, add task).
+- **Coupling**: Low coupling between different sections. They are independent but interact with each other through user inputs and server-provided data.
+
+This summary provides an overview of the template's structure, functionality, and how it operates within the context of the larger application.

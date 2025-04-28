@@ -1,0 +1,123 @@
+Output:
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Contact Card</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        input::placeholder {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <aside>
+        <div class="item">
+            <a href="/dashboard/">
+                <div class="icon">🏠</div>
+                <span>Home</span>
+            </a>
+        </div>
+        <div class="item">
+            <a href="/display_all_users/">
+                <div class="icon">👤</div>
+                <span>All Users</span>
+            </a>
+        </div>
+    </aside>
+    
+    {% if messages %}
+        <div id="messages" style="margin-left: -215px; margin-top: 5px;">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <script>
+        const message = document.getElementById('messages');
+        if (message) {
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+    
+    <header style="z-index: -5; position: absolute;">
+        <h1>User Contact Card</h1>
+        <nav class="nav">
+            {% if current_role == 'Admin/Supervisor' %}
+            <a href="/create_user">Users</a>
+            <a href="/create_course">Courses</a>
+            <a href="/create_section">Section</a>
+            {% endif %}
+            <a href="/notifications">Notifications</a>
+            <a href="/calendar">Calendar</a>
+            <a href="/tasks">Course Assignments</a>
+            <a href="{% url 'logout' %}" class="logout">Logout</a>
+        </nav>
+    </header>
+    <div class="card" style="margin-top: 100px; position: absolute;">
+        <h1 style="text-align: center;">{{ user.first_name }} {{ user.last_name }}</h1>
+        <p>
+            <label><strong>Email: </strong></label>
+            <label>{{ user.email_address }}</label>
+        </p>
+        <p>
+            <label><strong>Phone Number: </strong></label>
+            <label>{{ user.phone_number }}</label>
+        </p>
+        <p>
+            <label><strong>Home Address: </strong></label>
+            <label>{{ user.street_address }}, {{ user.city }}, {{ user.state }}, {{ user.zip_code }}</label>
+        </p>
+        <p>
+            <label><strong>Role Type: </strong></label>
+            <label>{{ user.role_name }}</label>
+        </p>
+    </div>
+</body>
+</html>
+
+Documentation Summary:
+-----------------------
+
+Overall File Purpose: This file is a contact card for an individual user in the system, providing information such as email address, phone number, home address, and role type.
+
+Key Functions/Methods and Their Responsibilities:
+
+* `{% static 'css/styles.css' %}` loads the CSS stylesheet for the page.
+* `input::placeholder { color: red; }` styles the input placeholder text as red.
+* The `messages` block of code checks if there are any messages to display and displays them in an alert with a specified tag.
+* The `message` variable is defined as the HTML element with the ID "messages" and is only displayed if it exists.
+* The `setTimeout()` function hides the message after 5 seconds.
+* The `header` section provides a navigation menu for the user, including links to various pages in the system.
+* The `div` section within the `card` section displays the user's contact information, including email address, phone number, home address, and role type.
+
+Inputs/Outputs/Side Effects:
+
+* Inputs: None
+* Outputs: HTML page with a contact card for the selected user
+* Side Effects: Displays a message if there are any messages to display
+
+Design Patterns, Dependencies:
+-----------------------------
+
+* `{% static 'css/styles.css' %}` loads the CSS stylesheet for the page.
+* `input::placeholder { color: red; }` styles the input placeholder text as red.
+* The `messages` block of code checks if there are any messages to display and displays them in an alert with a specified tag.
+* The `message` variable is defined as the HTML element with the ID "messages" and is only displayed if it exists.
+* The `setTimeout()` function hides the message after 5 seconds.
+* The `header` section provides a navigation menu for the user, including links to various pages in the system.
+* The `div` section within the `card` section displays the user's contact information, including email address, phone number, home address, and role type.
+
+Cohesion and Coupling:
+--------------------
+
+* Cohesion: The overall file is well-organized with clear sections for different functionalities, making it easy to read and understand.
+* Coupling: The file has a low coupling score as there are no external dependencies or side effects outside of the code itself.

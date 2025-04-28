@@ -1,5 +1,0 @@
-1. `Email` class - This is a view function that displays the email form and handles the email sending logic through the `New_Email` class. It takes in a request object as an argument, which it uses to get the current user's name and role from the session data stored in the request.
-    2. `New_Email` class - This is a class that represents the email form data. It has several attributes such as the subject, message, sender, recipients, and attachments. The `checkInfo` method checks if all the required fields are filled out and returns a boolean value indicating whether the form submission is valid or not.
-    3. `send_mail` - This is a function that sends an email from the default email address in Django's settings to the recipients specified in the request data. It takes in the subject, message, sender, recipients, and fail silently arguments as input. The `fail_silently` argument is set to `True`, which means that if there are any errors sending the email, they will be logged but not raised as exceptions.
-
-Please let me know if you have any further questions or need more information on how to use these classes in your Django project!

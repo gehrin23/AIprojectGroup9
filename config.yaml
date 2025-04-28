@@ -1,6 +1,6 @@
 repo_paths:
-  #- D:\PyCharm\Workspace\Projects\AI Project\Repos\Well Documented
-  - D:\PyCharm\Workspace\Projects\AI Project\Repos\Bad Documentation\django_project-master
+  - C:\PyCharm\WorkSpace\Repos\Well Documented
+  #- C:\PyCharm\WorkSpace\Repos\Bad Documented
 
 file_types: ['.py', '.java', '.js', '.html', '.ipynb', '.css']
 

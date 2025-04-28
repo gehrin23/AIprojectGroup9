@@ -1,7 +1,0 @@
-1. `test_bad_username`: This test checks that the username field is required and cannot be empty. It also checks that the username must be between 3 and 50 characters long and contain only alphanumeric characters and underscores.
-2. `test_bad_password`: This test checks that the password field is required and cannot be empty. It also checks that the password must be at least 8 characters long, contain a mix of uppercase and lowercase letters, numbers, and special characters, and not contain any spaces or tabs.
-3. `test_bad_first_name`: This test checks that the first name field is required and cannot be empty. It also checks that the first name must be between 1 and 50 characters long and contain only alphanumeric characters and underscores.
-4. `test_bad_last_name`: This test checks that the last name field is required and cannot be empty. It also checks that the last name must be between 1 and 50 characters long and contain only alphanumeric characters and underscores.
-5. `test_bad_email`: This test checks that the email address field is required and cannot be empty. It also checks that the email address must be a valid email address and not already in use by another user.
-6. `tearDown`: This method deletes all User objects from the database at the end of each test case.
-7. `test_good_user`: This test creates a new User object with valid data and checks that it has been saved successfully. It also verifies that the username, password, first name, last name, and email address have been set correctly.

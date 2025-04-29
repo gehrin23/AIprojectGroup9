@@ -1,0 +1,12 @@
+repo_paths:
+  - C:\PyCharm\WorkSpace\Repos\Well Documented
+  #- C:\PyCharm\WorkSpace\Repos\Bad Documented
+
+file_types: ['.py', '.java', '.js', '.html', '.ipynb', '.css']
+
+models:
+  - qwen2.5-coder:14b
+  - llama3:latest
+  - codellama:7b
+
+prompt_method: chain

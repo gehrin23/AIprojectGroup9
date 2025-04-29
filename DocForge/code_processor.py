@@ -1,52 +1,31 @@
 import os, json, requests
 from RepoSift import repo_loader as rl
+from reportlab.lib.pagesizes import LETTER
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from prompt_builder import *
 
-def generate_documentation(code, model_name="qwen2.5-coder:14b"):
-    """Generate documentation for a single code file using Qwen model."""
-    print(f"Generating documentation using {model_name}...")
+PROMPT_METHODS = {
+    "chain": chain_of_thought_prompt,
+    "few": few_shot_prompt,
+    "self": self_critique_prompt,
+    "rubric": rubric_prompt,
+}
 
-    prompt = f"""
-    I need comprehensive documentation for the following source code:
 
-    
-    {code}
-    
-    
-    Please provide:
-    1. A general description of what the code does
-    2. Inline comments explaining key parts and logic to help clarify actions and variables
-    3. Function/method/class/interface/enum documentation in proper format (docstring). Ensure to add parameters required, parameters variable name and their types, side effects of 
-    method/function, and what the method/function returns (if it returns anything)
-    4. Provide any import notes about usage, edge cases, side effects, limitations, or any other import documentation
-    5. Do not alter any existing functional code
-    6. If a comment already exists, read over it, and determine if it accurately portrays what the method/function/variable is or is doing. 
-    7. If comment is inaccurate, adjust the pre-existing comment so that it properly reflects what is happening
-    8. A comment can be deemed inaccurate if it being to broad, or using incorrect terminology/jargon. 
-    9. If a comment is a single line, use the appropriate single line comment function, instead of using a multiline function
-    10.If a comment is a multiple lines, use the appropriate multiple line comment functionality, instead of using the single line function
-    11. DONT PROVIDE UNNECESSARY COMMENTATION! Meaning do not reply to the prompt that is being asked. Focus on providing the necessary comments and that is all
-    
-    Proper Comments for the following languages:
-        Java: 
-            - Single comment = // <comment>
-            - Multiline comment = /** <comment line>*/
-        HTML: 
-            - <!--- <comment> ----> 
-        CSS: 
-            - /* <comment lines> */
-        Python:
-            - Single comment = # <comment>
-            - Multiline comment = ''' <comment lines> '''
-            - Multiline comment = triple quotations <comment lines> triple quotations
-        JavaScript:
-            - Single comment = // <comment>
-            - Multiline comment = /* <comment lines> */
-    """
+def safe_filename(name):
+    return name.replace(":", "_").replace("/", "_").replace("\\", "_")
+
+def generate_documentation(code, model, prompt_method):
+
+    print(f"Generating new comments and documentation using {model} with {prompt_method} prompting. . . ")
+
+    prompt =  PROMPT_METHODS[prompt_method](code)
 
     try:
         url = "http://localhost:11434/api/generate"
         payload = {
-            "model": model_name,
+            "model": model,
             "prompt": prompt,
             "stream": True,
             "options": {
@@ -77,7 +56,9 @@ def generate_documentation(code, model_name="qwen2.5-coder:14b"):
         return None
 
 
-def process_repos(file_path, model_name="qwen2.5-coder:14b"):
+
+def process_repos(file_path, model_name, prompt_method):
+
     """Process a single file and generate documentation for it."""
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -87,32 +68,35 @@ def process_repos(file_path, model_name="qwen2.5-coder:14b"):
         print(f"Using model: {model_name}")
         print(f"File size: {len(code)} characters")
         print(f"Number of lines: {code.count('\n') + 1}")
-
-        documentation = generate_documentation(code, model_name)
+        
+        documentation = generate_documentation(code, model_name, prompt_method)
 
         if documentation:
             # Create output filename
-            filename = os.path.basename(file_path)
-            ext = os.path.splitext(filename)[1].lstrip('.')
-            repo_root = os.path.basename(os.path.dirname(file_path))
+            split_token = "Please provide:"
+            if split_token in documentation:
+                comment = documentation.split(split_token)[0].strip()
+                summary = documentation.split(split_token)[1].strip()
+            else:
+                comment = documentation.strip()
+                summary = "No summary was generated, sorry"
 
-            # Create model-specific output directory
-            model_dir = model_name.replace(':', '_')  # Replace colons for valid directory names
-            output_dir = os.path.join("..", "well_documented_code", model_dir, repo_root, ext)
+            filename = os.path.basename(file_path)
+            project_name = os.path.basename(os.path.dirname(file_path))
+            output_dir = os.path.join("..", "well_documented_projects", safe_filename(model_name), project_name)
             os.makedirs(output_dir, exist_ok=True)
 
             output_file = os.path.join(output_dir, f"documented_{filename}")
             with open(output_file, "w", encoding="utf-8") as f:
-                f.write(documentation)
+                f.write(comment)
+
+            pdf_name = f"{os.path.splitext(filename)[0]}_summary.pdf"
+            pdf_path = os.path.join(output_dir, pdf_name)
+            title = f"Onboarding Summary: {filename}"
+            pdf(summary, pdf_path, title)
 
             print(f"Documentation saved to {output_file}")
-
-            # Display a preview
-            print("\nDocumentation Preview:")
-            print("-" * 80)
-            preview = documentation[:500] + "..." if len(documentation) > 500 else documentation
-            print(preview)
-            print("-" * 80)
+            print(f"Onboarding saved to {pdf_path}")
 
         return True
 
@@ -121,26 +105,42 @@ def process_repos(file_path, model_name="qwen2.5-coder:14b"):
         return False
 
 
+def pdf(summary, out, title):
+    can = canvas.Canvas(out, pagesize=LETTER)
+    width, height = LETTER
+    margin = 0.75 * inch
+    line_height = 14
+
+    can.setFont("Helvetica-Bold", 16)
+    can.drawString(margin, height - margin, title)
+
+    can.setFont("Courier", 12)
+    y = height - margin - 30
+
+    for line in summary.splitlines():
+        if y < margin:
+            can.showPage()
+            can.setFont("Courier", 12)
+            y = height - margin
+        can.drawString(margin, y, line[:120])
+        y -= line_height
+
+    can.save()
+    print(f"{title} saved to {out}")
+
+
 if __name__ == "__main__":
-    config = rl.load_config()
+    config = rl.load_config("../config.yaml")
     source_files = rl.get_source_files(config['repo_paths'], config['file_types'])
-    source_files = source_files[:5]  # Process only the first 5 files
+
+    prompt_method = config['prompt_method']
 
     print(f"\n Found {len(source_files)} files to document.\n")
 
-    # Define the models to test
-    models = [
-        "qwen2.5-coder:14b",
-        "codellama:7b",
-        "llama3:8b"
-    ]
-
-    # Process each file with each model
-    for model in models:
-        print(f"\n\n===== TESTING MODEL: {model} =====\n")
-
-        for i, path in enumerate(source_files):
-            print(f"\n[{i + 1}/{len(source_files)}] Documenting with {model}: {path}")
-            success = process_repos(path, model)
+    for mod in config['models']:
+        print(f"\nStarted with model: {safe_filename(mod)}")
+        for i, path, in enumerate(source_files):
+            print(f"\n[{i + 1}/{len(source_files)}] Documenting: {path}")
+            success = process_repos(path, mod, prompt_method)
             if not success:
-                print(f"Failed to document this file with {model}")
+                print("Failed to document this file")

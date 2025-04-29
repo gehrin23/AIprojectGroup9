@@ -2,7 +2,7 @@ from collections import defaultdict
 import yaml
 import os
 
-def load_config(filename="config.yaml"):
+def load_config(filename="../config.yaml"):
     base_path = os.path.dirname(__file__)
     config_path = os.path.join(base_path, filename)
 
@@ -25,7 +25,7 @@ def get_source_files(repos, ftypes):
 #run the repo_loader file. This run will create a text document of the number of identified code files that are specified in the
 #config.yaml file
 if __name__ == "__main__":
-    config = load_config()
+    config = load_config("../config.yaml")
     source_files = get_source_files(
         config['repo_paths'],
         config.get('file_types'),
@@ -42,6 +42,6 @@ if __name__ == "__main__":
     for ext, count in ext_counts.items():
         print(f" {ext}: {count}")
 
-    with open("found_files.txt", "w") as out_file:
+    with open("../FoundFiles.txt", "w") as out_file:
         for f in source_files:
             out_file.write(f + "\n")

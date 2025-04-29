@@ -2,6 +2,7 @@
 #Ignore local repo references and raw training output
 .idea
 *.iml
+*.txt
 out
 gen
 well_documented_projects

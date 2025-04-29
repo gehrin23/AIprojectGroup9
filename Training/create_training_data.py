@@ -12,7 +12,7 @@ PROMPT_TEMPLATES = {
     "ipynb": "Read and learn from this professionally documented Jupyter Notebook code on how to properly add docstrings and inline comments.",
 }
 
-def create_training_data(output_dir="../TrainingData/"):
+def create_training_data(output_dir="./TrainingData/"):
     config = rl.load_config("../config.yaml")
     files = rl.get_source_files(config['repo_paths'], config['file_types'])
 
@@ -32,4 +32,36 @@ def create_training_data(output_dir="../TrainingData/"):
 
         if not content:
             continue
+
+        prompt = PROMPT_TEMPLATES[ext]
+        training_data[ext].append({
+            "prompt": prompt,
+            "response": content
+        })
+
+        if i % 500 == 0:
+            print(f"Processed {i} of {len(files)} files...")
+
+    os.makedirs(output_dir,exist_ok=True)
+
+    for ext, entries in training_data.items():
+        out_file = os.path.join(output_dir, f"{ext}_training.jsonl")
+        with open(out_file, "w", encoding="utf-8") as out:
+            for entry in entries:
+                out.write(json.dumps(entry) + "\n")
+
+        print(f"Saved {len(entries)} entries to {out_file}")
+
+
+if __name__ == "__main__":
+    create_training_data()
+
+
+
+
+
+
+
+
+
 

@@ -11,6 +11,9 @@ models:
 
 prompt_method: chain
 
+
 pdf_prompt_method: pdf
 
 pdf_model: codellama:7b
+
+

@@ -38,6 +38,8 @@ def chain_of_thought_prompt(code):
     1. The original code, but with the adjust documentation that helps with clarity, readability, and easy understanding of the code block it belongs to.
     2. DO NOT MODIFY THE ORIGINAL SOURCE CODE. 
     3. DO NOT WRAP THE CODE IN MARKDOWN (no ```python blocks).
+    4. Do Not Verify the Prompt that was given, just add the docstrings and inline comments
+    5. Do Not add unneeded announcements about the document or about receiving the prompt
     
     Here is the source code:
     {code}
@@ -130,3 +132,22 @@ def rubric_prompt(code):
     {code}
     """
 
+def pdf_prompt(code):
+    return f"""
+    You are a professional Writer, Author, and Software Engineer. 
+    
+    Given the following source code, and all of the documentation that is inside of it, write a professional onboarding document.
+    
+    Let The Following Guide Your Writing:
+    1. The overall purpose of the file
+    2. Key functions, methods, classes, and what they do, what are their side effects, what do they return.
+    3. Important variables and their usages, and what they variable represents. 
+    4. Design patterns, libraries, API's, or external dependencies used.
+    5. How this file connects to the larger portion of the project. 
+    6. Any specific logic, edge cases, or clever design choices. 
+    7. DO NOT OUTPUT THE SOURCE CODE!
+    8. Write clear, readable, grammatically correct, well structured explanations in full English paragraphs. 
+    
+    Here is the source code:
+    {code}
+    """

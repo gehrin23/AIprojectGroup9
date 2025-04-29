@@ -10,3 +10,5 @@ models:
   - codellama:7b
 
 prompt_method: chain
+
+training_data_path: "TrainingData/py.jsonl"

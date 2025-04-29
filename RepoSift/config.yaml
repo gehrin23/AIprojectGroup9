@@ -1,0 +1,5 @@
+repo_paths: C:\Users\John\WellDocCode
+
+# training_paths :
+
+file_types: {'.py','.java','html','css','.js','ipynb'}

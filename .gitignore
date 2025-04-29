@@ -3,6 +3,8 @@
 .idea
 *.iml
 *.txt
+.iml
+.xml
 out
 gen
 

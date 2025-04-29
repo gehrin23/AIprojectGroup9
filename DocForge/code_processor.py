@@ -4,6 +4,7 @@ from reportlab.lib.pagesizes import LETTER
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from prompt_builder import *
+from textwrap import wrap
 
 PROMPT_METHODS = {
     "chain": chain_of_thought_prompt,
@@ -159,21 +160,37 @@ def pdf(summary, out, title):
     width, height = LETTER
     margin = 0.75 * inch
     line_height = 14
+    max_line_width = width - 2 * margin  # usable horizontal space
 
+    # Estimate characters per line based on font
+    can.setFont("Courier", 12)
+    avg_char_width = can.stringWidth("M", "Courier", 12)
+    max_chars_per_line = int(max_line_width / avg_char_width)
+
+    # Title
     can.setFont("Helvetica-Bold", 16)
     can.drawString(margin, height - margin, title)
 
+    # Body text
     can.setFont("Courier", 12)
+    textobject = can.beginText()
     y = height - margin - 30
+    textobject.setTextOrigin(margin, y)
 
     for line in summary.splitlines():
-        if y < margin:
-            can.showPage()
-            can.setFont("Courier", 12)
-            y = height - margin
-        can.drawString(margin, y, line[:120])
-        y -= line_height
+        wrapped_lines = wrap(line, width=max_chars_per_line)
+        for wrapped_line in wrapped_lines:
+            if y < margin:
+                can.drawText(textobject)
+                can.showPage()
+                can.setFont("Courier", 12)
+                textobject = can.beginText()
+                y = height - margin
+                textobject.setTextOrigin(margin, y)
+            textobject.textLine(wrapped_line)
+            y -= line_height
 
+    can.drawText(textobject)
     can.save()
     print(f"{title} saved to {out}")
 

@@ -1,6 +1,6 @@
 repo_paths:
-  - D:\PyCharm\Workspace\Projects\AI Project\Repos\Well Documented
- # - D:\PyCharm\Workspace\Projects\AI Project\Repos\Bad Documentation\django_project-master\django_app\classes
+  - C:\PyCharm\WorkSpace\Repos\Well Documented
+  - C:\PyCharm\WorkSpace\Repos\Bad Documented\django_project-master\django_app\classes
 file_types: ['.py', '.java', '.js', '.html', '.ipynb', '.css']
 
 models:
@@ -10,7 +10,6 @@ models:
  # - codellama:7b
 
 prompt_method: chain
-
 
 pdf_prompt_method: pdf
 

@@ -16863,3 +16863,11 @@ C:\PyCharm\WorkSpace\Repos\Well Documented\Structures-master\src\test\java\com\t
 C:\PyCharm\WorkSpace\Repos\Well Documented\Structures-master\src\test\java\com\unions\QuickUFTest.java
 C:\PyCharm\WorkSpace\Repos\Well Documented\Structures-master\src\test\java\com\unions\UnionFindTest.java
 C:\PyCharm\WorkSpace\Repos\Well Documented\Structures-master\src\test\java\com\unions\WeightedQuickUFTest.java
+C:\PyCharm\WorkSpace\Repos\Bad Documented\django_project-master\django_app\classes\assignment_class.py
+C:\PyCharm\WorkSpace\Repos\Bad Documented\django_project-master\django_app\classes\course_class.py
+C:\PyCharm\WorkSpace\Repos\Bad Documented\django_project-master\django_app\classes\email_class.py
+C:\PyCharm\WorkSpace\Repos\Bad Documented\django_project-master\django_app\classes\login.py
+C:\PyCharm\WorkSpace\Repos\Bad Documented\django_project-master\django_app\classes\section_class.py
+C:\PyCharm\WorkSpace\Repos\Bad Documented\django_project-master\django_app\classes\user_assignment.py
+C:\PyCharm\WorkSpace\Repos\Bad Documented\django_project-master\django_app\classes\user_class.py
+C:\PyCharm\WorkSpace\Repos\Bad Documented\django_project-master\django_app\classes\__init__.py

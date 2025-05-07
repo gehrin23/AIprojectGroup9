@@ -26,7 +26,6 @@ def create_training_data(output_dir="./TrainingData/"):
         try:
             with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
                 content = f.read().strip()
-
         except Exception:
             continue
 
@@ -42,7 +41,7 @@ def create_training_data(output_dir="./TrainingData/"):
         if i % 500 == 0:
             print(f"Processed {i} of {len(files)} files...")
 
-    os.makedirs(output_dir,exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
 
     for ext, entries in training_data.items():
         out_file = os.path.join(output_dir, f"{ext}_training.jsonl")
@@ -52,16 +51,5 @@ def create_training_data(output_dir="./TrainingData/"):
 
         print(f"Saved {len(entries)} entries to {out_file}")
 
-
 if __name__ == "__main__":
     create_training_data()
-
-
-
-
-
-
-
-
-
-

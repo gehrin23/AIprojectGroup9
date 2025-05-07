@@ -1,5 +1,17 @@
-repo_paths: C:\Users\John\WellDocCode
+repo_paths:
+  - C:\Users\John\Documents\GitHub\AIprojectGroup9
 
-# training_paths :
+file_types:
+  - ".py"
+  - ".java"
+  - ".html"
+  - ".css"
+  - ".js"
+  - ".ipynb"
 
-file_types: {'.py','.java','html','css','.js','ipynb'}
+models:
+  - qwen2.5-coder:14b
+  - llama3:latest
+  - codellama:7b
+
+prompt_method: chain

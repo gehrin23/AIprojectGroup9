@@ -1,19 +1,17 @@
 repo_paths:
-  - D:\PyCharm\Workspace\Projects\AI Project\Repos\Well Documented
- # - D:\PyCharm\Workspace\Projects\AI Project\Repos\Bad Documentation\django_project-master\django_app\classes
-file_types: ['.py', '.java', '.js', '.html', '.ipynb', '.css']
+  - C:\Users\John\Documents\GitHub\AIprojectGroup9
+
+file_types:
+  - ".py"
+  - ".java"
+  - ".html"
+  - ".css"
+  - ".js"
+  - ".ipynb"
 
 models:
- # - qwen2.5:7b
   - qwen2.5-coder:14b
- # - llama3:latest
- # - codellama:7b
+  - llama3:latest
+  - codellama:7b
 
 prompt_method: chain
-
-
-pdf_prompt_method: pdf
-
-pdf_model: codellama:7b
-
-

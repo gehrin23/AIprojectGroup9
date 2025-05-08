@@ -5,11 +5,7 @@ from django_app.models import Course
 
 class CreateCourse:
     def __init__(self, post_data):
-        """
-        Initialize the CreateCourse class with data from a POST request.
 
-        :param post_data: Dictionary containing course details
-        """
         self.data = post_data
         self.courseId = post_data['courseId']
         self.courseName = post_data['courseName']
@@ -20,11 +16,7 @@ class CreateCourse:
         self.create_course()
 
     def wellFormed(self):
-        """
-        Check if the course data is well-formed and meets all validation criteria.
 
-        :return: True if the data is well-formed, False otherwise
-        """
         for key, value in self.data.items():
             if value is None or value.strip() == '':
                 self.message = "Failed to Create Course: Missing Information"
@@ -41,8 +33,6 @@ class CreateCourse:
     def create_course(self):
         """
         Create a new course in the database if all validations pass.
-
-        :return: The created Course object or False if validation fails
         """
         if not self.wellFormed(): 
             return False
@@ -61,8 +51,6 @@ class CreateCourse:
     def date_check(self):
         """
         Validate that the start and end dates are valid.
-
-        :return: True if dates are valid, False otherwise
         """
         date_start_date = datetime.strptime(self.startDate, '%Y-%m-%d').date()
         if date_start_date < date.today():
@@ -76,8 +64,6 @@ class CreateCourse:
     def is_two_digits(self):
         """
         Check if the credit value has more than two digits.
-
-        :return: True if more than two digits, False otherwise
         """
         return len(self.credits) > 2
 
